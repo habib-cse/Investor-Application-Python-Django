@@ -1,0 +1,29 @@
+a,.btn{
+    text-decoration: none !important;
+}
+a:hover,.btn:hover{
+    text-decoration: none;
+}
+
+
+.my_notification {
+	padding: 5px 25px 0 10px;
+	margin-bottom: 5px;
+}
+.my_notification button {
+	padding: 3px 10px !important; 
+}
+.my_notification a {
+	font-size: 14px;
+	display: block;
+	margin-bottom: -3px !important;
+	padding: 0;
+}
+.my_notification span {
+	line-height: 1;
+	padding: 0;
+	margin-top: 5px !important;
+	color: #17a2b8 !important;
+	font-size: 12px !important;
+	display: block;
+}

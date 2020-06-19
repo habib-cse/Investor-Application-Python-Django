@@ -1,0 +1,58 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+{% load humanize %}
+{% block d-title %}
+    Notifications List
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-12"> 
+          <h1 class="m-0 text-dark">Notification List</h1> 
+        </div> 
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div> 
+<section class="invest_request_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-11 col-sm-12">
+                <div class="card card-body"> 
+                    
+                {% if notifications %}
+                    {% for notification in notifications %}
+                    <div class="alert alert-dismissible fade show no-border alert-info m-0" role="alert">
+                        <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        <a href="{% url 'investor:single_nofication' notification.id %}"> 
+                            <p class="card-desc mb-0">{{notification.desc}}</p>
+                            <span class="m-0 text-sm">{{notification.date|naturaltime}}</span> 
+                        </a>
+                    </div>
+                    {% endfor %} 
+
+                {% elif investor_notifications %}  
+                    {% for notification in notifications %}
+                    <div class="alert alert-dismissible fade show no-border alert-info m-0" role="alert">
+                        <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <a href="{% url 'investor:single_nofication' notification.id %}"> 
+                            <p class="card-desc mb-0">{{notification.desc}}</p>
+                            <span class="m-0 text-sm">{{notification.date|naturaltime}}</span> 
+                        </a>
+                    </div>
+                    {% endfor %} 
+                        
+                {% endif %} 
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section> 
+{% endblock d-content %} 

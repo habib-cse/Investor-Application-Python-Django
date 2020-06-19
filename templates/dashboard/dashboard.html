@@ -1,0 +1,363 @@
+{% extends 'dashboard/base/base.html' %}
+
+{% block d-title %}
+  Dashboard
+{% endblock d-title %}
+  
+{% block d-content %} 
+{% load extra_tags %}
+
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-12">
+
+        {% if request.user.is_authenticated %}
+        <h1 class="m-0 text-dark">Admin Dashboard</h1>  
+        {% elif request.session.investor %}
+        <h1 class="m-0 text-dark">Investor Dashboard</h1>
+        {% endif %}
+          
+        
+      </div> 
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+
+
+{% if request.user.is_authenticated %} 
+<section class="content investor_dashboard">
+  <div class="container-fluid"> 
+    <div class="row">
+      <div class="col-lg-2 col-6">
+        <!-- small box -->
+        <div class="small-box bg-info">
+          <div class="inner text-center">
+            <h4>{{total_investor|total_investor}}</h4> 
+            <p>Total Investor</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-bag"></i>
+          </div>
+          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+      <div class="col-lg-2 col-6">
+        <!-- small box -->
+        <div class="small-box bg-danger">
+          <div class="inner text-center">
+            <h4>{{amount_invested|total_amount_invested_admin}}</h4> 
+            <p>Total Amount Invested</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-stats-bars"></i>
+          </div>
+          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-2 col-6">
+        <!-- small box -->
+        <div class="small-box bg-secondary">
+          <div class="inner text-center">
+            <h4>{{paid_amount|total_interest_paid_admin}}</h4> 
+            <p>Total Interest Paid</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-stats-bars"></i>
+          </div>
+          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-2 col-6">
+        <!-- small box -->
+        <div class="small-box bg-primary">
+          <div class="inner text-center">
+            <h4>{{invested_amount_admin|active_invested_amount_admin}}</h4> 
+            <p>Active Invested Amount</p> 
+          </div>
+          <div class="icon">
+            <i class="ion ion-stats-bars"></i>
+          </div>
+          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div> 
+      <div class="col-lg-2 col-6"> 
+        <div class="small-box bg-dark">
+          <div class="inner text-center">
+            <h4>{{total_interest_admin|total_interest_topay_admin}}</h4>  
+            <p style="font-size:15px">Total Interest To Pay</p> 
+          </div>
+          <div class="icon">
+            <i class="ion ion-stats-bars"></i>
+          </div>
+          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div> 
+      <div class="col-lg-2 col-6"> 
+        <div class="small-box bg-warning">
+          <div class="inner text-center">
+            <h4>{{pending_amount_admin|pending_amount_admin}}</h4>  
+            <p>Pending Amount</p> 
+          </div>
+          <div class="icon">
+            <i class="ion ion-stats-bars"></i>
+          </div>
+          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div> 
+
+    </div> 
+
+    <div class="row">
+      <div class="col-md-8 col-sm-12">
+        <div class="card p-3 alert alert-dismissible fade show no-border" role="alert">
+          <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4>Pending Approval</h4>
+        <hr>
+        <table class="table table-bordered table-striped">
+          <thead class="table-dark text-center">
+            <th>SL</th>
+            <th>Investor</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Interest</th>
+            <th>Action</th>
+          </thead>
+          <tbody class="text-center">
+            
+            {% for item in pending_request|pending_approval_admin %}
+            <tr>
+              <td class=" align-middle">{{forloop.counter}}</td>
+              <td class=" align-middle">{{item.investor.first_name}} {{item.investor.last_name}}</td>
+              <td class=" align-middle">{{item.amount_to_invest|coma_separator_value}}</td>
+              <td class=" align-middle">{{item.date_of_invest |date}}</td>
+              <td class=" align-middle">{{item.expected_interest | coma_separator_value}}</td>
+              <td class=" align-middle">
+                 <a href="{% url 'investor:approve_investment' item.id %}" class="btn btn-sm btn-success">Approve</a>
+                 <a href="" class="btn btn-sm btn-success">Cancle</a>
+              </td>
+            </tr>
+            {% endfor %} 
+            
+          </tbody>
+        </table>
+        <a href="#" class="btn btn-success d-block">View All Active Invests <i class="fas fa-arrow-circle-right ml-2"></i></a>
+
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-12">
+        <div class="card p-3 alert alert-dismissible fade show no-border" role="alert">
+          <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4>Top Investor List</h4>
+          <hr>
+          <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+              <th>SL</th>
+              <th>Invested Amount</th>
+              <th>Invested Date</th>
+              <th>Action</th> 
+            </thead>
+            <tbody> 
+              {% for item in request.session.investor|pending_invest_list %}
+              <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{item.amount_to_invest|coma_separator_value}}</td>
+                <td>{{item.date_of_invest |date}}</td>
+                <td><a href="" class="btn btn-success btn-sm">Cancle </a></td>
+              </tr>
+              {% endfor %} 
+            </tbody>
+          </table>
+          <a href="#" class="btn btn-success d-block">View All Pending Invests <i class="fas fa-arrow-circle-right ml-2"></i></a>
+
+        </div>
+      </div>
+
+    </div>
+
+
+
+
+  </div><!-- /.container-fluid -->
+</section>
+{% elif request.session.investor %} 
+  
+  <section class="content investor_dashboard">
+    <div class="container-fluid">
+      <!-- Small boxes (Stat box) -->
+      <div class="row">
+        <div class="col-lg-2 col-6">
+          <!-- small box -->
+          <div class="small-box bg-info">
+            <div class="inner text-center">
+              <h4>{{request.session.investor|total_invest_amount }}</h4> 
+              <p>Total Amount Invested</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-bag"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-2 col-6">
+          <!-- small box -->
+          <div class="small-box bg-danger">
+            <div class="inner text-center">
+              <h4>{{request.session.investor|total_interest_amount}}</h4>
+
+              <p>Total Interest Received</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-stats-bars"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-2 col-6">
+          <!-- small box -->
+          <div class="small-box bg-secondary">
+            <div class="inner text-center">
+              <h4>{{request.session.investor|active_invested_amount}}</h4> 
+              <p>Active Invested Amount</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-stats-bars"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-2 col-6">
+          <!-- small box -->
+          <div class="small-box bg-primary">
+            <div class="inner text-center">
+              <h4>{{request.session.investor|upcoming_interest_amount}}</h4> 
+              <p>Upcoming Interest</p> 
+            </div>
+            <div class="icon">
+              <i class="ion ion-stats-bars"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div> 
+        <div class="col-lg-2 col-6"> 
+          <div class="small-box bg-dark">
+            <div class="inner text-center">
+              <h4>{{request.session.investor|next_payment_amount}}</h4>  
+              <p style="font-size:14.6px">Next Payment, {{request.session.investor|days_left}} days left</p> 
+            </div>
+            <div class="icon">
+              <i class="ion ion-stats-bars"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div> 
+        <div class="col-lg-2 col-6"> 
+          <div class="small-box bg-warning">
+            <div class="inner text-center">
+              <h4>{{request.session.investor|pending_approval}}</h4>  
+              <p>Pending Approval</p> 
+            </div>
+            <div class="icon">
+              <i class="ion ion-stats-bars"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div> 
+
+      </div> 
+      <!-- Main row -->
+      <div class="row"> 
+        <div class="col">
+          <div class="alert_area text-center">
+            <div class="alert alert-danger alert-dismissible fade show no-border" role="alert">
+              <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              
+              <h2>Win 100000 USD BY INVESTING HERE</h2>
+              <P class="mb-2">Lorem ipsum dolor sit, <strong>amet consectetur adipisicing elit.</strong> Incidunt harum illo vero itaque molestias autem ipsum vitae saepe. Consequuntur, magnam.</P>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita dolorum nihil praesentium animi qui in possimus fuga doloremque atque inventore quaerat reiciendis minus vero nobis assumenda vel, illum sapiente et?</p>
+              <a href="" class="btn btn-primary">How to Join</a>
+            </div>
+          </div>
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-md-7 col-sm-12">
+          <div class="card p-3 alert alert-dismissible fade show no-border" role="alert">
+            <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4>Active Invest</h4>
+          <hr>
+          <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+              <th>SL</th>
+              <th>Invested Amount</th>
+              <th>Invested Date</th>
+              <th>Expected Interest</th>
+              <th>Payment Receive</th>
+            </thead>
+            <tbody>
+              
+              {% for item in request.session.investor|active_invest_list %}
+              <tr>
+                <td class=" align-middle">{{forloop.counter}}</td>
+                <td class=" align-middle">{{item.amount_to_invest|coma_separator_value}}</td>
+                <td class=" align-middle">{{item.date_of_invest |date}}</td>
+                <td class=" align-middle">{{item.expected_interest | coma_separator_value}}</td>
+                <td class=" align-middle">{{item.withdraw_date | date}}
+                  <p style="font-size:12px;margin:0;color:red">{{item.id|days_remaining}} days left</p> 
+                </td>
+              </tr>
+              {% endfor %} 
+              
+            </tbody>
+          </table>
+          <a href="#" class="btn btn-success d-block">View All Active Invests <i class="fas fa-arrow-circle-right ml-2"></i></a>
+
+          </div>
+        </div>
+        <div class="col-md-5 col-sm-12">
+          <div class="card p-3 alert alert-dismissible fade show no-border" role="alert">
+            <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4>Pending Invest Approval</h4>
+            <hr>
+            <table class="table table-bordered table-striped">
+              <thead class="table-dark">
+                <th>SL</th>
+                <th>Invested Amount</th>
+                <th>Invested Date</th>
+                <th>Action</th> 
+              </thead>
+              <tbody> 
+                {% for item in request.session.investor|pending_invest_list %}
+                <tr>
+                  <td>{{forloop.counter}}</td>
+                  <td>{{item.amount_to_invest|coma_separator_value}}</td>
+                  <td>{{item.date_of_invest |date}}</td>
+                  <td><a href="" class="btn btn-success btn-sm">Cancle </a></td>
+                </tr>
+                {% endfor %} 
+              </tbody>
+            </table>
+            <a href="#" class="btn btn-success d-block">View All Pending Invests <i class="fas fa-arrow-circle-right ml-2"></i></a>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- /.row (main row) -->
+    </div><!-- /.container-fluid -->
+  </section>
+{% endif %}
+{% endblock d-content %}

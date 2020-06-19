@@ -1,0 +1,194 @@
+{% extends 'account/ac-base.html' %}
+{% load crispy_forms_field %} 
+{% load static %}
+{% block ac-title %}
+    Investor Registrations
+{% endblock ac-title %}
+
+{% block ac-content %}
+<div class="logo text-center" id="main_logoa">
+  <a href="">
+      <img src="{% static '/img/logo.png' %}" alt="">
+  </a>
+</div>
+<div class="card">
+  <div class="card-body register-card-body">
+    <p class="login-box-msg">PFA INVEST SIGN UP FORM    </p>
+
+    <form action="" method="POST">
+      {% csrf_token %}
+      <div id="first_page">
+        <div class="input-group mb-3">
+          <input type="text" name='username' class="form-control" placeholder="Username" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div> 
+        <div class="input-group mb-3">
+          <input type="password" name="password" id='pass1' class="form-control" placeholder="Password" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-1">
+          <input type="password" id="pass2" onkeyup="checkPassword()" class="form-control" placeholder="Retype password" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div> 
+
+        <div style="height: 20px;" class="d-block"><p class="m-0" id="pass_error"> </p></div>
+        <div class="social-auth-links text-center mt-1">  
+          <p onclick="openSecondPage()" class="btn btn-primary">Next</p> 
+        </div>
+      </div>
+
+      <div id="second_page" class="second_page">
+        <div class="custom_form">
+          <div class="form-group">
+            <input type="text" name="fname" placeholder="First Name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <input type="text" name="lname" placeholder="Last Name" class="form-control">
+          </div>
+          <div class="form-group">
+            <input type="email" name="email" placeholder="Email" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <input type="tel" name="phone" placeholder="Phone" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <input type="text" name="address" placeholder="Address" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <input type="number" name="amount_invest" placeholder="Amount Invested" onkeyup="amountCalculation()" id="invest_amount" class="form-control"  required>
+          </div>
+          <div class="form-group">
+            <input type="number" name="earning_amount" placeholder="Expected Interest" id="earning_amount" class="form-control" readonly>
+          </div>
+          <div class="form-group">
+            <p class="m-0">Date of Investment</p>
+            <input type="date" name="invest_date" onchange="autoDate()" id="invest_date" class="form-control" required>
+          </div> 
+          <div class="form-group">
+            <p class="m-0">Expacted Withdrawal Date</p>
+            <input type="text" name="withdraw_date" placeholder="" id="withdraw_data" class="form-control" readonly>
+          </div>
+          <div class="form-group">
+            <select name="bank_name" class="form-control" id=" required>
+              <option value="">Select Bank Name</option>
+              {% for bank in bank_list %}
+                <option value="{{bank.id}}">{{bank}}</option>
+              {% endfor %}
+                
+            </select>
+          </div>
+          <div class="form-group">
+            <input type="number" name="bank_account" placeholder="Account Number" class="form-control" required>
+          </div> 
+          <div class="form-group">
+            <input type="checkbox" name="" id="" required><a target="_blank" href=""> Agree with the terms anc condition</a>
+          </div>
+          <div class="form-group d-block overflow-hidden">
+            <p onclick="openFirstPage()" class="btn btn-primary float-left">Back</p>  
+            <input class="btn btn-success float-right" type="submit" value="Submit">
+          </div> 
+        </div>
+      </div>
+
+    </form> 
+    <p>Already have an Account? <a href="{% url 'investor:investor_login' %}">Login</a> </p>
+
+  </div>
+  <!-- /.form-box -->
+</div><!-- /.card -->
+ 
+
+{% endblock ac-content %}
+{% block ac-script %}
+  <script>
+
+    function amountCalculation(){
+      var invest_amount = document.getElementById("invest_amount").value
+      var earning_amount = (15* invest_amount)/100
+      earning_amount = Math.floor(earning_amount)
+      document.getElementById("earning_amount").setAttribute('value',earning_amount)
+
+    }
+
+
+    function autoDate(){
+      var main_date = document.getElementById('invest_date').value; 
+      console.log(main_date)
+      var chooseDate=new Date(main_date);
+      var date_in_milisec = chooseDate.setDate(chooseDate.getDate()+30);
+      var full_date = new Date(date_in_milisec)   
+
+      var date = new Date(full_date),
+      mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+      day = ("0" + date.getDate()).slice(-2);
+      var finial_date =  [date.getFullYear(), mnth, day].join("-") 
+
+      var date_size = finial_date.length
+      console.log(date_size)
+      if(date_size > 9){ 
+        document.getElementById("withdraw_data").setAttribute('value',finial_date)
+      }
+      else{
+        document.getElementById("withdraw_data").setAttribute('value'," ")
+      }
+    }
+    
+
+    function checkPassword(){
+      var pass1 = document.getElementById('pass1').value
+      var pass2 = document.getElementById('pass2').value
+      var size = pass2.length
+      console.log(pass1, pass2, size)
+      if (size > 0){
+        if(pass1 === pass2){
+          document.getElementById("pass_error").innerHTML= "Password Matched"
+        }
+        else{
+          document.getElementById("pass_error").innerHTML= "Password Doesn't Match"
+        }
+      }
+      else{
+        document.getElementById("pass_error").innerHTML= "" 
+
+      }
+     
+    }
+
+
+
+    function openSecondPage(){
+      var p1 = document.getElementById("first_page")
+      var p2 = document.getElementById("second_page") 
+      p1.style.display = 'none' 
+      p2.style.display = 'block'
+      document.getElementById("main_logoa").style.marginTop = '200px'
+
+
+    }
+
+    function openFirstPage(){
+      var p1 = document.getElementById("first_page")
+      var p2 = document.getElementById("second_page") 
+      p1.style.display = 'block' 
+      p2.style.display = 'none'
+      document.getElementById("main_logoa").style.marginTop = '0px'
+
+    }
+
+
+  </script>  
+ 
+
+{% endblock ac-script %}

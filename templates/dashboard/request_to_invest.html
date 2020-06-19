@@ -1,0 +1,115 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+
+{% block d-title %}
+    Request to Invest
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-12"> 
+          <h1 class="m-0 text-dark">Request for New Investment</h1> 
+        </div> 
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+<section class="message_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% if messages %}  
+                    {% for message in messages %}
+                        <p class="pb-1" style="color: red;">{{message}}</p>
+                    {% endfor %} 
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+<section class="invest_request_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-10">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="card card-body"> 
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Amount To Invest</label>
+                            <div class="col-sm-9">
+                                <input type="number" name="amount_invest" placeholder="Amount Invested" onkeyup="amountCalculation()" id="invest_amount" class="form-control"  required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Expected Interest</label>
+                            <div class="col-sm-9">
+                                <input type="number" name="earning_amount" placeholder="Expected Interest" id="earning_amount" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Date of Investment</label>
+                            <div class="col-sm-9">
+                                <input type="date" name="invest_date" onchange="autoDate()" id="invest_date" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Expacted Withdrawal Date</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="withdraw_date_show" placeholder="" id="withdraw_data" class="form-control" readonly>
+                                <input type="hidden" name="withdraw_date" id="withdraw_data_main" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row"> 
+                            <div class="col-sm-9 offset-sm-3">
+                                <input class="btn btn-success" type="submit" value="Request to Invest">
+                            </div>
+                        </div> 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section> 
+{% endblock d-content %}
+  
+{% block d-script %}
+   <script>  
+    function amountCalculation(){
+        var invest_amount = document.getElementById("invest_amount").value
+        var earning_amount = (15* invest_amount)/100
+        earning_amount = Math.floor(earning_amount)
+        document.getElementById("earning_amount").setAttribute('value',earning_amount)
+  
+      }
+  
+  
+      function autoDate(){
+        var main_date = document.getElementById('invest_date').value; 
+        console.log(main_date)
+        var chooseDate=new Date(main_date);
+        var date_in_milisec = chooseDate.setMonth(chooseDate.getMonth()+1);
+        var full_date = new Date(date_in_milisec)   
+  
+        var date = new Date(full_date),
+        mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+        day = ("0" + date.getDate()).slice(-2);
+        var show_date =  [mnth, day, date.getFullYear()].join(" / ") 
+        var finial_date =  [date.getFullYear(), mnth, day].join("-") 
+  
+        var date_size = finial_date.length
+        console.log(date_size)
+        if(date_size > 9){ 
+          document.getElementById("withdraw_data").setAttribute('value',show_date)
+          document.getElementById("withdraw_data_main").setAttribute('value',finial_date)
+        }
+        else{
+          document.getElementById("withdraw_data").setAttribute('value'," ")
+          document.getElementById("withdraw_data_main").setAttribute('value'," ")
+        }
+      }
+      
+
+   </script>
+{% endblock d-script %}
