@@ -27,3 +27,13 @@ a:hover,.btn:hover{
 	font-size: 12px !important;
 	display: block;
 }
+.notification {
+    margin-bottom: 2px !important;
+}
+.little_shadow.notification {
+    background: #eee !important;
+}
+.notification_button{
+	height: 400px;
+	overflow: auto;
+}

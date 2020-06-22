@@ -169,12 +169,14 @@ def coma_separator_value(value):
 @register.filter
 def investor_notifications(id):
     notications = Notification.objects.filter(investor_id=id, is_view=False, for_admin=False).count()
-    if notications:
+    if notications > 0:
         return notications
+    else:
+        return ""
 
 @register.filter
 def investor_notification_list(id):
-    notication_list = Notification.objects.filter(investor_id=id, is_view=False, for_admin=False).order_by('-date')
+    notication_list = Notification.objects.filter(investor_id=id, is_view=False, for_admin=False).order_by('-date')[0:10]
     if notication_list:
         return notication_list
 
@@ -190,7 +192,7 @@ def admin_notifications(self):
 
 @register.filter
 def admin_notification_list(self):
-    notication_list = Notification.objects.filter(is_view=False, for_admin=True).order_by('-date')
+    notication_list = Notification.objects.filter(is_view=False, for_admin=True).order_by('-date')[0:7]
 
     if notication_list:
         return notication_list

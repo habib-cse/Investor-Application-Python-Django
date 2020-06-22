@@ -18,9 +18,7 @@
         <li class="nav-item d-none d-sm-inline-block">
           <a href="{% url 'investor:investor_logout' %}" class="nav-link">Log out</a>
         </li>
-      {% endif %} 
-        
-      
+      {% endif %}  
       
       {% if request.session.investor %}
         
@@ -96,9 +94,9 @@
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-bell"></i>  
-            <span class="badge badge-warning navbar-badge">{{admin_notification|admin_notifications}}</span> 
+            <span class="badge badge-warning navbar-badge" id="adnt" data-value="{{admin_notification|admin_notifications}}">{{admin_notification|admin_notifications}}</span> 
         </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right"> 
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right notification_button"> 
           <span class="dropdown-item dropdown-header">{{admin_notification|admin_notifications}} Notifications</span> 
           
           {% for item in admin_notification|admin_notification_list %}
@@ -106,16 +104,15 @@
             <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-            <a class="text-muted" href="{% url 'investor:single_nofication' item.id %}">{{item.desc}}</a> 
+            <a class="text-muted" href="{% url 'investor:single_nofication' item.id %}">{{item.title|safe}}</a> 
             <span class="m-0 text-muted text-sm">{{item.date|naturaltime}}</span>
           </div> 
             
-          {% endfor %}
-            
-          
-
+          {% endfor %} 
           <div class="dropdown-divider"></div>
-          <a href="{% url 'investor:admin_notification_list' %}" class="dropdown-item dropdown-footer">See All Notifications</a>
+          <a href="{% url 'investor:admin_unread_notifications' %}" class="dropdown-item dropdown-footer">New Notifications</a>
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'investor:admin_notification_list' %}" class="dropdown-item dropdown-footer">All Notifications</a>
         </div>
       </li>
 
@@ -124,9 +121,9 @@
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-bell"></i>  
-            <span class="badge badge-warning navbar-badge">{{request.session.investor|investor_notifications}}</span> 
+            <span class="badge badge-warning navbar-badge" id="adnt" data-value="{{request.session.investor|investor_notifications}}">{{request.session.investor|investor_notifications}}</span> 
         </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right"> 
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right notification_button"> 
           <span class="dropdown-item dropdown-header">{{request.session.investor|investor_notifications}} Notifications</span> 
           
           {% for item in request.session.investor|investor_notification_list %}
@@ -134,16 +131,17 @@
             <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-            <a class="text-muted" href="{% url 'investor:single_nofication' item.id %}">{{item.title}}</a> 
+            <a class="text-muted" href="{% url 'investor:single_nofication' item.id %}">{{item.title|safe}}</a> 
             <span class="m-0 text-muted text-sm">{{item.date|naturaltime}}</span>
           </div> 
             
           {% endfor %}
-            
-          
+             
 
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+            <a href="{% url 'investor:investor_unread_notification_list' request.session.investor %}" class="dropdown-item dropdown-footer">New Notifications</a>
+            <div class="dropdown-divider"></div>
+            <a href="{% url 'investor:investor_notification_list' request.session.investor %}" class="dropdown-item dropdown-footer">All Notifications</a>
         </div>
       </li>
       {% endif %}

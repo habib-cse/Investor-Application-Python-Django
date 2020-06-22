@@ -14,10 +14,10 @@
           <h1 class="m-0 text-dark">Notification List</h1> 
         </div> 
         <div class="col-3"> 
-            {% if admin_unread_notifications %}
-            <a href="{% url 'investor:admin_notification_list' %}" class="btn btn-info float-right btn-sm mr-1">All Notifications</a>
-            {% elif notifications %}
-            <a href="{% url 'investor:admin_unread_notifications' %}" class="btn btn-info float-right btn-sm">Unread Notifications</a>
+            {% if investor_notifications %}
+            <a href="{% url 'investor:investor_unread_notification_list' request.session.investor %}" class="btn btn-info float-right btn-sm">Unread Notifications</a>
+            {% elif investor_unread_notifications %}
+                <a href="{% url 'investor:investor_notification_list' request.session.investor %}" class="btn btn-info float-right btn-sm mr-1">All Notifications</a>
             {% endif %}
         </div> 
       </div><!-- /.row -->
@@ -27,80 +27,82 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-11 col-sm-12">
-                <div class="card card-body"> 
+                <div class="card card-body">  
                 <p id="delete" style="color: red;"></p>
-                {% if notifications %}
-                    {% for notification in notifications %}
-                    {% if notification.is_view %}
-                    <div class="notification alert alert-dismissible fade show no-border alert-light m-0" role="alert">
-                    {% else %} 
-                    <div class="little_shadow notification alert alert-dismissible fade show no-border alert-light m-0" role="alert">
-                    {% endif %}
-                        
-                        <button type="button" onclick="deleteNotification({{notification.id}})"  class="close text-dark" data-dismiss="alert" aria-label="Close">
+                {% if investor_notifications %}  
+                    {% for notification in investor_notifications %} 
+                    {% if not notification.is_view %}
+                        <div class="little_shadow notification alert text-dark alert-dismissible fade show no-border alert-light m-0" role="alert">
+                    {% else %}
+                        <div class="text-dark notification alert alert-dismissible fade show no-border alert-light m-0" role="alert">
+                    {% endif %} 
+                    
+                        <button onclick="deleteNotification({{notification.id}})" type="button" class="text-dark close color-white" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
-                          </button>
+                        </button>
                         <a class="text-dark" href="{% url 'investor:single_nofication' notification.id %}"> 
                             <p class="card-desc mb-0">{{notification.title|safe}}</p>
                             <span class="m-0 text-sm">{{notification.date|naturaltime}}</span> 
-                        </a> 
-                    </div>
-                    {% endfor %}
-                    
-                    {% if notifications.has_other_pages %}
+                        </a>
+                    </div> 
+                    {% endfor %}  
+
+                    {% if investor_notifications.has_other_pages %}
                         <nav class="mt-3 float-right" aria-label="Page navigation example">
                             <ul class="pagination float-right">
-                            {% if notifications.has_previous %}
-                            <li class="page-item"><a class="page-link" href="?page={{ notifications.previous_page_number }}">Previous</a></li>
+                            {% if investor_notifications.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ investor_notifications.previous_page_number }}">Previous</a></li>
                             {% else %}
                                 <li class="disabled page-item"><span class="page-link">Previous</span></li>
                             {% endif %}
-                            {% for i in notifications.paginator.page_range %}
-                                {% if notifications.number == i %}
+                            {% for i in investor_notifications.paginator.page_range %}
+                                {% if investor_notifications.number == i %}
                                 <li class="active page-item"><span class="page-link">{{ i }} <span class="sr-only page-link">(current)</span></span></li>
                                 {% else %}
                                 <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                                 {% endif %}
                             {% endfor %}
-                            {% if notifications.has_next %}
+                            {% if investor_notifications.has_next %}
                             <li class="page-item"><a class="page-link" href="?page={{ users.next_page_number }}">Next</a></li>
                             {% else %}
                                 <li class="disabled page-item"><span class="page-link">Next</span></li>
                             {% endif %}
                             </ul>
                         </nav>
-                    {% endif %}  
+                    {% endif %}
+
+
                         
-                {% elif admin_unread_notifications %}  
-                    {% for notification in admin_unread_notifications %} 
+                {% elif investor_unread_notifications %}  
+                    {% for notification in investor_unread_notifications %} 
                     <div class="little_shadow notification alert alert-dismissible fade show no-border alert-light m-0" role="alert">
-                        <button onclick="markAsRead({{notification.id}})" id="notification" type="button" class="text-dark close color-white" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button  onclick="markAsRead({{notification.id}})" type="button" class="text-dark close color-white" data-dismiss="alert" aria-label="Close">
+                            <span style="font-size:12px" aria-hidden="true">Mark As Read</span>
                         </button>
                         <a class="text-dark" href="{% url 'investor:single_nofication' notification.id %}"> 
                             <p class="card-desc mb-0">{{notification.title|safe}}</p>
                             <span class="m-0 text-sm">{{notification.date|naturaltime}}</span> 
-                        </a> 
+                        </a>
                     </div>
                     <h4 id="no_data"></h4>
                     {% endfor %}
                     
-                    {% if admin_unread_notifications.has_other_pages %}
+                    {% if investor_unread_notifications.has_other_pages %}
                     <nav class="mt-3 float-right" aria-label="Page navigation example">
                         <ul class="pagination float-right">
-                        {% if admin_unread_notifications.has_previous %}
-                        <li class="page-item"><a class="page-link" href="?page={{ admin_unread_notifications.previous_page_number }}">Previous</a></li>
+                        {% if investor_unread_notifications.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ investor_unread_notifications.previous_page_number }}">Previous</a></li>
                         {% else %}
                             <li class="disabled page-item"><span class="page-link">Previous</span></li>
                         {% endif %}
-                        {% for i in admin_unread_notifications.paginator.page_range %}
-                            {% if admin_unread_notifications.number == i %}
+                        {% for i in investor_unread_notifications.paginator.page_range %}
+                            {% if investor_unread_notifications.number == i %}
                             <li class="active page-item"><span class="page-link">{{ i }} <span class="sr-only page-link">(current)</span></span></li>
                             {% else %}
                             <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                             {% endif %}
                         {% endfor %}
-                        {% if admin_unread_notifications.has_next %}
+                        {% if investor_unread_notifications.has_next %}
                         <li class="page-item"><a class="page-link" href="?page={{ users.next_page_number }}">Next</a></li>
                         {% else %}
                             <li class="disabled page-item"><span class="page-link">Next</span></li>
@@ -120,7 +122,6 @@
     </div>
 </section> 
 {% endblock d-content %} 
-
 {% block d-script %}
     <script>
 
@@ -140,6 +141,7 @@
               });
           }
         function markAsRead(id){ 
+
             var value = document.getElementById("adnt").getAttribute('data-value');
             var new_val = value - 1
             if(new_val > 0){
@@ -149,11 +151,9 @@
             else{
                 document.getElementById("adnt").innerHTML = ""
                 document.getElementById("adnt").setAttribute('data-value',"") 
-            }
-            if(new_val<1){
-
                 document.getElementById("no_data").innerHTML = "No new notification"
-            }
+            } 
+
             $.ajax({
                 url:"{% url 'investor:ajax_notification_markas_read' %}",
                 type:'get',
@@ -172,6 +172,4 @@
 
     </script>
 
-
 {% endblock d-script %}
-    

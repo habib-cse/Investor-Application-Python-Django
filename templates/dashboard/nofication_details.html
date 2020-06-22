@@ -2,7 +2,7 @@
 {% load extra_tags %}
 {% load humanize %}
 {% block d-title %}
-    {{notification.title}}
+    Notification Details
 {% endblock d-title %} 
 
 {% block d-content %} 
@@ -10,8 +10,20 @@
 <div class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
-        <div class="col-12"> 
-          <h1 class="m-0 text-dark">{{notification.title}}</h1> 
+        <div class="col-md-9 col-sm-12"> 
+          <h5 class="m-0 text-dark float-left">{{notification.title|safe}}</h5>  
+        </div> 
+        <div class="col-md-3 col-sm-12">  
+          
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'investor:admin_notification_list' %}" class="btn btn-info float-left btn-sm mr-1">All Notifications</a>
+            <a href="{% url 'investor:admin_unread_notifications' %}" class="btn btn-info float-left btn-sm">Unread Notifications</a>
+          {% elif request.session.investor %}
+            <a href="{% url 'investor:investor_notification_list' request.session.investor %}" class="btn btn-info float-left btn-sm mr-1">All Notifications</a>
+            <a href="{% url 'investor:investor_unread_notification_list' request.session.investor %}" class="btn btn-info float-left btn-sm">Unread Notifications</a>
+          {% endif %}
+            
+          
         </div> 
       </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -19,11 +31,15 @@
 <section class="invest_request_area">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-10 col-sm-12">
+            <div class="col-md-11 col-sm-12">
                 <div class="card"> 
                     <div class="card-body">
-                        <h4 class="card-desc">{{notification.desc}}</h4>
-                        <span class="m-0 text-muted text-sm">{{notification.date|naturaltime}}</span>
+                        <p class="card-desc">{{notification.desc|safe}}</p>
+                        {% if notification.has_download %}
+                          <p>Click <a target="_blank" href="{% url 'investor:terms_condition_pdf' request.session.investor %}">HERE</a> to download your post-payment contract.
+                          </p>
+                        {% endif %}
+                        <span class="m-0 text-muted text-sm">{{notification.date|naturaltime}}</span> 
                     </div>
                 </div>
             </div>

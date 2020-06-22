@@ -107,15 +107,20 @@
         </div>
       </div> 
 
-    </div> 
-
+    </div>  
     <div class="row">
       <div class="col-md-8 col-sm-12">
         <div class="card p-3 alert alert-dismissible fade show no-border" role="alert">
           <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-          <h4>Pending Approval</h4>
+          <h4 class="float-left w-25">Pending Approval</h4>
+          
+          {% for message in messages %}
+          <p class="float-right w-75" style="color: red;">{{message}}</p>
+          {% endfor %}
+            
+          
         <hr>
         <table class="table table-bordered table-striped">
           <thead class="table-dark text-center">
@@ -137,7 +142,7 @@
               <td class=" align-middle">{{item.expected_interest | coma_separator_value}}</td>
               <td class=" align-middle">
                  <a href="{% url 'investor:approve_investment' item.id %}" class="btn btn-sm btn-success">Approve</a>
-                 <a href="" class="btn btn-sm btn-success">Cancle</a>
+                 <a href="{% url 'investor:cancle_investment' item.id %}" class="btn btn-sm btn-success">Cancel</a>
               </td>
             </tr>
             {% endfor %} 

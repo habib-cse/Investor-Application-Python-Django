@@ -58,12 +58,16 @@ class Notification(models.Model):
     is_view = models.BooleanField(default=False)
     status = models.BooleanField(default=True)
     for_admin = models.BooleanField(default=False)
-    date = models.DateTimeField(auto_now_add=True) 
+    date = models.DateTimeField(auto_now_add=True)
+    has_download = models.BooleanField(default=False)
     class Meta: 
         verbose_name = 'Notification'
         verbose_name_plural = 'Notifications'
 
     def __str__(self):
         return self.title
+
+
+    
         
     

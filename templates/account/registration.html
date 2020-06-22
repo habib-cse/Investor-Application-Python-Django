@@ -67,17 +67,19 @@
             <input type="text" name="address" placeholder="Address" class="form-control" required>
           </div>
           <div class="form-group">
-            <input type="number" name="amount_invest" placeholder="Amount Invested" onkeyup="amountCalculation()" id="invest_amount" class="form-control"  required>
+            <p class="mb-1">Amount Invested In Naira (₦)</p>
+            <input type="number" name="amount_invest" placeholder="Amount Invested In Naira (₦)" onkeyup="amountCalculation()" id="invest_amount" class="form-control"  required>
           </div>
           <div class="form-group">
-            <input type="number" name="earning_amount" placeholder="Expected Interest" id="earning_amount" class="form-control" readonly>
+            <p class="mb-1">Expected Interest In Naira (₦)</p>
+            <input type="number" name="earning_amount" placeholder="Expected Interest In Naira (₦)" id="earning_amount" class="form-control" readonly>
           </div>
           <div class="form-group">
-            <p class="m-0">Date of Investment</p>
+            <p class="mb-1">Date of Investment</p>
             <input type="date" name="invest_date" onchange="autoDate()" id="invest_date" class="form-control" required>
           </div> 
           <div class="form-group">
-            <p class="m-0">Expacted Withdrawal Date</p>
+            <p class="mb-1">Expacted Withdrawal Date</p>
             <input type="text" name="withdraw_date" placeholder="" id="withdraw_data" class="form-control" readonly>
           </div>
           <div class="form-group">
@@ -90,7 +92,7 @@
             </select>
           </div>
           <div class="form-group">
-            <input type="number" name="bank_account" placeholder="Account Number" class="form-control" required>
+            <input type="text" name="bank_account" placeholder="Account Number" class="form-control" maxlength="10" required>
           </div> 
           <div class="form-group">
             <input type="checkbox" name="" id="" required><a target="_blank" href=""> Agree with the terms anc condition</a>
@@ -173,7 +175,7 @@
       var p2 = document.getElementById("second_page") 
       p1.style.display = 'none' 
       p2.style.display = 'block'
-      document.getElementById("main_logoa").style.marginTop = '200px'
+      document.getElementById("main_logoa").style.marginTop = '260px'
 
 
     }
