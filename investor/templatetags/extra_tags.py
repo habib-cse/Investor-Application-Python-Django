@@ -1,6 +1,6 @@
 from django import template
 register = template.Library()  
-from investor.models import Bank,Investor,Invest,Notification
+from investor.models import Bank,Investor,Invest,Notification, Message
 from datetime import datetime
 
 
@@ -131,7 +131,7 @@ def days_left(id):
     invests = Invest.objects.filter(investor_id = id,status=True).order_by('withdraw_date').first()
     if invests:
         remaing_day = datetime.date(invests.withdraw_date) - datetime.now().date()
-        remaing_day = remaing_day.days  
+        remaing_day = remaing_day.days
         return remaing_day  
 
 
@@ -196,3 +196,68 @@ def admin_notification_list(self):
 
     if notication_list:
         return notication_list
+
+ 
+@register.filter
+def top_investor_list(self):
+    investor_list = Investor.objects.all()
+    invest_list = Invest.objects.all().order_by('investor')
+    dict = {}  
+    for investor in investor_list: 
+        total_value = 0
+        for invest in invest_list:
+            if investor.id ==  invest.investor.id:
+                total_value += invest.amount_to_invest
+        full_name = "{} {}".format(investor.first_name, investor.last_name)
+        dict[full_name]= total_value  
+        
+
+    sort_orders = sorted(dict.items(), key=lambda x: x[1], reverse=True)[0:10] 
+    return sort_orders
+
+@register.filter
+def top_investor_name(item):
+    return item[0]
+
+@register.filter
+def top_investor_amount(item):
+    total_amount =  item[1]
+    return("{:,}".format(total_amount))
+
+
+@register.filter
+def investor_invest_amount(id):
+    amount = 0
+    investor = Invest.objects.filter(investor_id=id)
+    for item in investor:
+        amount += item.amount_to_invest
+
+
+    return("{:,}".format(amount))
+
+
+@register.filter
+def active_invested_list(self): 
+    investor = Invest.objects.filter(payment_status=False, status=True).order_by('withdraw_date')[0:20]
+    return investor 
+
+@register.filter
+def show_unread_message(id): 
+    unread_messages = Message.objects.filter(status=True,investor_id = id, is_view_admin=False).count()
+    if unread_messages:
+        return unread_messages
+
+
+@register.filter
+def show_unread_admin_message(id): 
+    unread_messages = Message.objects.filter(status=True, is_view_admin=False).count()
+    if unread_messages:
+        return unread_messages
+
+
+@register.filter
+def show_unread_investor_message(id): 
+    unread_messages = Message.objects.filter(investor_id = id,is_view_investor=False,is_admin=True).count()
+    if unread_messages:
+        return unread_messages
+

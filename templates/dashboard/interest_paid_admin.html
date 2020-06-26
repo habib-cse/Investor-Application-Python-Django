@@ -1,0 +1,67 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+{% load humanize %}
+{% block d-title %}
+    Interest Paid List
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-12"> 
+          <h1 class="m-0 text-dark">Interest Paid List</h1> 
+        </div> 
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div> 
+<section class="invest_request_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% for message in messages %}
+                    <p class="float-left mb-1" style="color: red;">{{message}}</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark text-center">
+                      <th>SL</th>
+                      <th>Investor</th>
+                      <th>Invest Amount</th>
+                      <th>Invest Date</th> 
+                      <th>Paid Date</th> 
+                      <th>Paid Amount</th>
+                      <th>Bank Name</th>
+                      <th>Account Number</th>
+                    </thead>
+                    <tbody class="text-center">
+                      
+                      {% for item in interest_paid %}
+                      <tr>
+                        <td class=" align-middle">{{forloop.counter}}</td>
+                        <td class=" align-middle">{{item.investor.first_name}} {{item.investor.last_name}}</td>
+                        <td class=" align-middle">{{item.amount_to_invest|coma_separator_value}}</td>
+                        <td class=" align-middle">{{item.date_of_invest |date}}</td>
+                        <td class=" align-middle">{{item.withdraw_date |date}}</td>
+                        <td class=" align-middle">{{item.expected_interest | coma_separator_value}}</td>
+                        <td class=" align-middle">{{item.investor.bank_name}}</td>
+                        <td class=" align-middle">{{item.investor.account_number}}</td>
+                      </tr>
+                      {% endfor %} 
+                      
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </div>
+</section> 
+{% endblock d-content %} 
+{% block d-script %}
+    <script> 
+    </script>
+
+{% endblock d-script %}

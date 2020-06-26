@@ -23,7 +23,7 @@ class Investor(models.Model):
     bank_name = models.ForeignKey(Bank, on_delete=models.CASCADE)
     account_number = models.BigIntegerField()
     agree_to_invest = models.BooleanField(default=True) 
-    status = models.BooleanField(default=False) 
+    status = models.BooleanField(default=True) 
 
     class Meta:
         verbose_name = "Investor"
@@ -67,7 +67,22 @@ class Notification(models.Model):
     def __str__(self):
         return self.title
 
+class Attachment(models.Model):
+    file = models.FileField(upload_to='message')
 
+    def __str__(self):
+        return self.file.name    
+
+class Message(models.Model):
+    message = models.TextField()
+    investor = models.ForeignKey(Investor, on_delete=models.CASCADE)
+    is_admin = models.BooleanField(default=False)
+    is_view_admin = models.BooleanField(default=False)
+    is_view_investor = models.BooleanField(default=False)
+    status = models.BooleanField(default=True)
+    date_time = models.DateTimeField(auto_now_add=True) 
+
+    def __str__(self):
+        return self.message
     
-        
     

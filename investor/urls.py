@@ -20,5 +20,14 @@ urlpatterns = [
     path('investor/notification/delete',views.ajax_notification_delete, name='ajax_notification_delete'),
     path('investor/notification/mark-read',views.ajax_notification_markas_read, name='ajax_notification_markas_read'),
     path('investor/<int:id>/terms-condition-pdf',views.terms_condition_pdf, name='terms_condition_pdf'),
+    path('investor/investors-list',views.all_investor_list, name='all_investor_list'),
+    path('investor/investor/<int:id>/delete',views.investor_delete, name='investor_delete'),
+    path('investor/all_pending_request',views.all_pending_request, name='all_pending_request'),
+    path('investor/all_active_invest_list',views.all_active_invest_list, name='all_active_invest_list'),
+    path('investor/admin-chat/<int:id>',views.admin_chat, name='admin_chat'),
+    path('investor/investor-chat/<int:id>',views.investor_chat, name='investor_chat'),
+    path('investor/make-payment/<int:id>',views.make_payment, name='make_payment'),
+    path('investor/interest-paid-admin',views.interest_paid_admin, name='interest_paid_admin'),
+    path('investor/interest-paid/<int:id>/delete',views.interest_paid_admin_delete, name='interest_paid_admin_delete'),
 
 ]

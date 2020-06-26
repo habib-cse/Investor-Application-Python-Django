@@ -37,3 +37,63 @@ a:hover,.btn:hover{
 	height: 400px;
 	overflow: auto;
 }
+strong{
+	font-weight: 700 !important;
+}
+.table_body_area {
+    max-height: 445px;
+    overflow: auto;
+}
+.direct-chat-messages{
+	height: 500px;
+	overflow:auto;
+}
+.direct-chat-inbox{
+	height: 562px;
+	overflow:auto;
+}
+.admin.investor {
+	background: #d2d6de; 
+	color: #000;
+}
+.admin {
+    text-align: center;
+    font-size: 20px;
+    width: 42px;
+    height: 42px;
+    border-radius: 80px;
+    background: #17a2b8;
+    padding-left: 3px;
+	padding-top: 6px;
+	color: #fff;
+}
+.single_investor{
+	overflow: hidden;
+	margin-bottom: 5px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #ddd;
+}
+.first_name_column .admin{
+	background-color:#28a745 ;
+}
+.first_name_column{
+	float: left;
+	width: 25%;
+}
+.full_name{
+	float: left;
+	width:75% ;
+}
+.full_name a {
+    font-size: 16px;
+    padding: 7px 0;
+    display: block;
+    color: #28a745;
+}
+.nav-sidebar>.nav-item .nav-icon {
+    margin-left: 0;
+    font-size: 1.2rem;
+    margin-right: 0;
+    text-align: center;
+    width: auto;
+}

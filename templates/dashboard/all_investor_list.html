@@ -1,0 +1,85 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+{% load humanize %}
+{% block d-title %}
+    Investor List
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-12"> 
+          <h1 class="m-0 text-dark">Investor List</h1> 
+        </div> 
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div> 
+<section class="invest_request_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% for message in messages %}
+                    <p class="float-left mb-1" style="color: red;">{{message}}</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-bordered table-striped text-center">
+                    <thead class="table-dark">
+                        <th>SL</th>
+                        <th>Full Name</th> 
+                        <th>Email Address</th>
+                        <th>Phone</th>
+                        <th style="width: 18%;">Address</th>
+                        <th>Bank Name</th>
+                        <th style="width: 11%;">Bank Account</th> 
+                        <th>Amount</th> 
+                        <th style="width:12%">Action</th>
+                    </thead>
+                    <tbody>
+                        
+                        {% for investor in investor_list %}
+                            <tr>
+                                <td class="align-middle">{{forloop.counter}}</td>
+                                <td class="align-middle">{{investor.first_name}} {{investor.last_name}}</td>
+                                <td class="align-middle">{{investor.email}}</td>
+                                <td class="align-middle">{{investor.phone}}</td>
+                                <td class="align-middle">{{investor.address}}</td>
+                                <td class="align-middle">{{investor.bank_name}}</td>
+                                <td class="align-middle">{{investor.account_number}}</td>  
+                                <td class="align-middle">{{investor.id|investor_invest_amount}}</td>
+                                <td class="align-middle">  
+                                    <div class="modal fade" id="investor-{{investor.id}}" tabindex="-1" role="dialog">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content"> 
+                                            <div class="modal-body">
+                                                <p>Are you sure you want to delete <strong>{{investor.first_name}} {{investor.last_name}}</strong> </p>  
+                                                <hr>
+                                                <a href="{% url 'investor:investor_delete' investor.id %}" class="btn btn-sm btn-info mr-3 pr-3 pl-3">Yes</a>
+                                                <button type="button" data-dismiss="modal" class="btn btn-info btn-sm pr-3 pl-3">No</button>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>  
+                                    <button class="btn btn-sm btn-info mr-1" data-toggle="modal" data-target="#investor-{{investor.id}}">
+                                        <i class="far fa-trash-alt"></i>
+                                      </button> 
+                                    <a href="{% url 'investor:admin_chat' investor.id  %}" class="btn btn-sm btn-info">Message</a>
+                                </td>
+                            </tr>
+                        {% endfor %} 
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section> 
+{% endblock d-content %} 
+{% block d-script %}
+    <script> 
+    </script>
+
+{% endblock d-script %}

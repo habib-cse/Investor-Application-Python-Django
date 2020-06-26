@@ -10,36 +10,28 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, JsonResponse
 from django.core.mail import send_mail
 from .pdfgenerator import renderPDF
-import datetime
-# Create your views here. 
-
-
+import datetime 
+# Create your views here.  
+from django.contrib.auth.decorators import login_required 
 # Admin functionality
 def admin_login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        try:
-            if request.session['investor']: 
-                messages.error(request, 'You already login as Investor')
-                return redirect('investor:admin_login') 
-            else:
-                if user is not None:
-                    login(request, user)
-                    return redirect('investor:dashboard')
-                else:
-                    messages.error(request, 'Username or password is  incorrect')
-        except:
-            return redirect('investor:admin_login') 
+        user = authenticate(username=username, password=password) 
+        request.session['investor'] = None 
+        if user is not None:
+            login(request, user)
+            return redirect('investor:dashboard')
+        else:
+            messages.error(request, 'Username or password is  incorrect') 
+            return redirect('investor:admin_login')
     return render(request, 'account/admin_login.html')
+
 
 def admin_logout(request):
     logout(request)
-    return redirect('investor:admin_login')
-    
-    
-
+    return redirect('investor:admin_login') 
 
 
 # investor functionality
@@ -204,7 +196,7 @@ def request_to_invest(request, id):
 def dashboard(request):
     return render(request,'dashboard/dashboard.html')
 
-
+@login_required
 def all_active_invest(request, id):
     active_invest = Invest.objects.filter(investor_id=id, status=True)
     context = {
@@ -404,4 +396,117 @@ def terms_condition_pdf(request,id):
         'investor':investor
     }
     bdonor_pdf = renderPDF('dashboard/terms_condition_pdf.html',context)
-    return HttpResponse(bdonor_pdf, content_type='application/pdf')
+    return HttpResponse(bdonor_pdf, content_type='application/pdf') 
+
+
+def all_investor_list(request):
+    investor_list = Investor.objects.filter(status=True).order_by('first_name')
+    
+    context = {
+        "investor_list":investor_list
+    }
+    return render(request, 'dashboard/all_investor_list.html',context)
+
+def investor_delete(request, id):
+    investor = Investor.objects.get(id=id)
+    investor.delete() 
+    messages.success(request, "Investor Deleted Successfully")
+    return redirect('investor:all_investor_list')
+    
+def all_pending_request(request):
+    pending_request = Invest.objects.filter(status=False, payment_status=False).order_by('-timestamp')
+    context = {
+        'pending_request':pending_request
+    }
+    return render(request, 'dashboard/all_pending_request.html',context)
+    
+
+def all_active_invest_list(request):
+    active_invest = Invest.objects.filter(status=True, payment_status=False).order_by('withdraw_date')
+    context = {
+        'active_invest_list':active_invest
+    }
+    return render(request, 'dashboard/all_active_invest_list.html',context)
+
+
+def admin_chat(request, id): 
+    messages = Message.objects.filter(status=True,investor_id = id).order_by('date_time')
+    if id != 0:
+        message_count = messages.count()  
+        if message_count > 0:  
+            messages.update(is_view_admin = True) 
+        else: 
+            Message.objects.create(message="Hello There", investor_id = id, is_admin=True, is_view_admin=True) 
+
+    investor = Message.objects.filter(status=True).values('investor_id','investor_id__first_name','investor_id__last_name').distinct()
+    if request.method == 'POST':
+        message = request.POST['message'] 
+        Message.objects.create(message=message, investor_id = id, is_admin=True, is_view_admin=True) 
+        
+    context = {
+        'messages':messages,
+        'investor':investor
+    }
+    return render(request,'dashboard/admin_chat.html',context) 
+
+def investor_chat(request, id):
+    messages = Message.objects.filter(investor_id=id).order_by('date_time')
+    messages.update(is_view_investor = True)
+    if request.method == 'POST':
+        message = request.POST['message'] 
+        Message.objects.create(message=message, investor_id = id, is_admin=False, is_view_admin=False,is_view_investor=True) 
+    
+    context = {
+        'messages':messages
+    }
+    return render(request, 'dashboard/investor_chat.html', context)
+
+def make_payment(request,id):
+    invest = Invest.objects.get(id=id)
+    investor_id = invest.investor.id
+    nfc_title = "Admin made a payment of <strong>₦ {}</strong> ".format(invest.amount_to_invest)
+    complete_invest_date = "{}/{}/{}".format(invest.date_of_invest.month,invest.date_of_invest.day, invest.date_of_invest.year )
+    complete_widthdraw_date = "{}/{}/{}".format(invest.withdraw_date.month,invest.withdraw_date.day, invest.withdraw_date.year )
+    
+    nfc_and_email_msg = """  
+        <p style="font-size:18px;margin-bottom:10px;"><strong>Congratulations!! {} {},</strong> <br>
+        You have received a payment from PFA. Find below the more details of your last payment:<p>  
+        Amount Invested: {} <br>
+        Date of investment:  {}<br>
+        Amount Paid:  {}<br>
+        Paid Date: {} <br>
+        Account Number:  {}<br>
+        Bank Name: {} <br><br> 
+    """.format(invest.investor.first_name, invest.investor.last_name,invest.amount_to_invest,complete_invest_date,invest.expected_interest,complete_widthdraw_date,invest.investor.account_number,invest.investor.bank_name) 
+
+    Notification.objects.create(investor_id=investor_id, title=nfc_title, desc=nfc_and_email_msg, for_admin=False) 
+    email_subject = "Admin made a payment of <strong>₦ {}</strong> ".format(invest.amount_to_invest)
+    form_email = 'pfa.erudite@gmail.com'
+    to_email = invest.investor.email
+
+    send_mail(
+        email_subject, 
+        nfc_and_email_msg,
+        form_email,
+        [to_email],
+        fail_silently=False, 
+        html_message=nfc_and_email_msg,
+
+    ) 
+
+    invest.payment_status=True
+    invest.save(0)
+    messages.success(request, "You have make a payment ")
+    return redirect('investor:all_active_invest_list')
+
+def interest_paid_admin(request):
+    interest_paid = Invest.objects.filter(payment_status=True).order_by('-withdraw_date')
+    context = {
+        'interest_paid':interest_paid
+    }
+    return render(request, 'dashboard/interest_paid_admin.html', context)
+
+def interest_paid_admin_delete(request,id):
+    interest_paid = Invest.objects.get(payment_status=True,id=id) 
+    interest_paid.delete()
+    return redirect('investor:interest_paid_admin')
