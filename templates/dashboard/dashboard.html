@@ -305,7 +305,9 @@
           <div class="small-box bg-dark">
             <div class="inner text-center">
               <h4>{{request.session.investor|next_payment_amount}}</h4>  
-              <p style="font-size:14.6px">Next Payment, {{request.session.investor|days_left}} days left</p> 
+              <p style="font-size:14.6px">Next Payment, {% if request.session.investor|days_left %}{{request.session.investor|days_left}} days left {% endif %} 
+                
+              </p> 
             </div>
             <div class="icon">
               <i class="ion ion-stats-bars"></i>

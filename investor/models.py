@@ -23,7 +23,7 @@ class Investor(models.Model):
     bank_name = models.ForeignKey(Bank, on_delete=models.CASCADE)
     account_number = models.BigIntegerField()
     agree_to_invest = models.BooleanField(default=True) 
-    status = models.BooleanField(default=True) 
+    status = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "Investor"

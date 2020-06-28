@@ -1,0 +1,75 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+{% load humanize %}
+{% block d-title %}
+    Bank List
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-12"> 
+          <h1 class="m-0 text-dark float-left w-75">Bank List</h1> 
+          <a href="{% url 'investor:add_bank' %}" class="btn btn-success float-right text-right">Add New Bank</a>
+        </div> 
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div> 
+<section class="invest_request_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% for message in messages %}
+                    <p class="float-left mb-1" style="color: red;">{{message}}</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-bordered table-striped text-center">
+                    <thead class="table-dark">
+                        <th>SL</th>
+                        <th>Bank Name</th> 
+                        <th>Status</th> 
+                        <th>Action</th>
+                    </thead>
+                    <tbody class="text-center">
+                        
+                        {% for bank in bank_list %}
+                            <tr>
+                                <td class="align-middle">{{forloop.counter}}</td>
+                                <td class="align-middle">{{bank.bank_name}}</td>
+                                <td class="align-middle"> 
+                                    {% if bank.status %}
+                                        <span>Active</span>
+                                    {% else %}
+                                        <span style="color: red;">Inactive</span>
+                                    {% endif %} 
+                                </td>
+                                <td class="align-middle text-center">
+                                    <a href="{% url 'investor:bank_edit' bank.id %}" class="btn btn-success btn-sm d-inline-block mr-1">Edit</a>
+                                    
+                                    {% if not bank.status %}
+                                        <a href="{% url 'investor:bank_active' bank.id %}" class="btn btn-warning btn-sm d-inline-block mr-1">Active</a>
+                                        {% else %}
+                                        <a href="{% url 'investor:bank_deactive' bank.id %}" class="btn btn-success btn-sm d-inline-block mr-1">Deactive</a>
+                                    {% endif %} 
+                                    
+                                </td> 
+                                 
+                            </tr>
+                        {% endfor %} 
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section> 
+{% endblock d-content %} 
+{% block d-script %}
+    <script> 
+    </script>
+
+{% endblock d-script %}

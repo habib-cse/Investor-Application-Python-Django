@@ -29,5 +29,13 @@ urlpatterns = [
     path('investor/make-payment/<int:id>',views.make_payment, name='make_payment'),
     path('investor/interest-paid-admin',views.interest_paid_admin, name='interest_paid_admin'),
     path('investor/interest-paid/<int:id>/delete',views.interest_paid_admin_delete, name='interest_paid_admin_delete'),
+    path('investor/dashboard/password/change',views.admin_password_change, name='admin_password_change'),
+    path('investor/add-investor',views.add_new_investor, name='add_new_investor'),
+    path('investor-active-link/<int:id>/activate',views.investor_active_link, name='investor_active_link'),
+    path('investor/add-bank',views.add_bank, name='add_bank'),
+    path('investor/bank-list',views.bank_list, name='bank_list'),
+    path('investor/bank-list/<int:id>',views.bank_edit, name='bank_edit'),
+    path('investor/bank-active/<int:id>',views.bank_active, name='bank_active'),
+    path('investor/bank-deactive/<int:id>',views.bank_deactive, name='bank_deactive'),
 
 ]

@@ -17,7 +17,7 @@
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false"> 
         <li class="nav-item has-treeview menu-open">
           <a href="{% url 'investor:dashboard' %}" class="nav-link active">
-            <i class="nav-icon fas fa-tachometer-alt"></i><p>Dashboard </p>
+            <i class="nav-icon fas fa-tachometer-alt"></i> <p> Dashboard </p>
           </a> 
         </li> 
         <li class="nav-item has-treeview">
@@ -26,11 +26,11 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="" class="nav-link">
+              <a href="{% url 'investor:admin_password_change' %}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i> <p>Change Password</p> </a>
             </li>
             <li class="nav-item">
-              <a href="pages/charts/flot.html" class="nav-link">
+              <a href="{% url 'investor:admin_logout' %}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i> <p>Log Out</p>
               </a>
             </li> 
@@ -42,7 +42,7 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="" class="nav-link">
+              <a href="{% url 'investor:add_new_investor' %}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i> <p>Add New Investor</p>
               </a>
             </li>
@@ -96,12 +96,12 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="pages/forms/general.html" class="nav-link">
+              <a href="{% url 'investor:add_bank' %}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i> <p>Add New Bank</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="pages/forms/advanced.html" class="nav-link">
+              <a href="{% url 'investor:bank_list' %}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i> <p>Bank List</p>
               </a>
             </li> 
@@ -110,18 +110,21 @@
         <li class="nav-item">
           <a href="{% url 'investor:admin_chat' 0 %}" class="nav-link">
             <i class="nav-icon far fa-envelope"></i>
+            <p>Inbox
             {% if admin_message|show_unread_admin_message %}
-            <p>Inbox <span class="badge badge-danger right">{{admin_message|show_unread_admin_message }}</span> </p>
+             <span class="badge badge-danger right">{{admin_message|show_unread_admin_message }}</span> 
 
             {% endif %}
+          </p>
           </a> 
         </li>  
         <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="fas fa-bell"></i>
+          <a href="{% url 'investor:admin_notification_list' %}" class="nav-link">
+            <i class="fas fa-bell"></i> <p> Notification 
             {% if admin_notification|admin_notifications %}
-            <p>Notification <span class="badge badge-danger right">{{admin_notification|admin_notifications}}</span> </p>
+            <span class="badge badge-danger right">{{admin_notification|admin_notifications}}</span> 
             {% endif %}
+          </p>
           </a> 
         </li> 
       </ul>

@@ -11,6 +11,8 @@ from django.http import HttpResponse, JsonResponse
 from django.core.mail import send_mail
 from .pdfgenerator import renderPDF
 import datetime 
+from django.contrib.auth.models import User
+
 # Create your views here.  
 from django.contrib.auth.decorators import login_required 
 # Admin functionality
@@ -121,12 +123,15 @@ def investor_login(request):
             if request.user.is_authenticated:
                 messages.error(request ,"You already login as Admin") 
                 return redirect('investor:investor_login') 
-            else:
-
+            else: 
                 chk_user = Investor.objects.filter(Q(username = user_email, password = user_pass) | Q(email = user_email, password = user_pass)).first()
                 if chk_user:
-                    request.session['investor'] = chk_user.id 
-                    return redirect('investor:dashboard') 
+                    if chk_user.status:
+                        request.session['investor'] = chk_user.id 
+                        return redirect('investor:dashboard') 
+                    else:  
+                        messages.error(request ,"Your Account is Not activated") 
+                        return render(request, "account/investor_login.html")
                 else:     
                     messages.error(request ,"Username or Password is incorrect") 
                     return render(request, "account/investor_login.html")
@@ -464,7 +469,7 @@ def investor_chat(request, id):
 def make_payment(request,id):
     invest = Invest.objects.get(id=id)
     investor_id = invest.investor.id
-    nfc_title = "Admin made a payment of <strong>₦ {}</strong> ".format(invest.amount_to_invest)
+    nfc_title = "Admin made a payment of ₦ {} ".format(invest.amount_to_invest)
     complete_invest_date = "{}/{}/{}".format(invest.date_of_invest.month,invest.date_of_invest.day, invest.date_of_invest.year )
     complete_widthdraw_date = "{}/{}/{}".format(invest.withdraw_date.month,invest.withdraw_date.day, invest.withdraw_date.year )
     
@@ -510,3 +515,141 @@ def interest_paid_admin_delete(request,id):
     interest_paid = Invest.objects.get(payment_status=True,id=id) 
     interest_paid.delete()
     return redirect('investor:interest_paid_admin')
+
+def admin_password_change(request):
+    user_id = request.user.id 
+    user = User.objects.get(id=user_id)
+    if request.method == 'POST':
+        old_pass = request.POST['old_pass']
+        password = request.POST['pass']
+        cpassword = request.POST['cpass']  
+
+        user_has = authenticate(request, username=user.username, password = old_pass)
+        if user_has is not None:
+            if password == cpassword:
+                user.set_password(password)
+                user.save()
+                messages.success(request,"Password Updated Successfully")
+            else: 
+                messages.error(request,"Password doesn't Matched")
+        else:
+            messages.error(request,"Old Password doesn't Matched")
+
+    return render(request, 'dashboard/admin_password_change.html')
+
+def add_new_investor(request):
+    bank_list = Bank.objects.filter(status=True)
+    if request.method == 'POST':
+        username = request.POST['username']
+        fname = request.POST['fname']
+        lname = request.POST['lname']
+        password = "123456"
+        email = request.POST['email']
+        phone = request.POST['phone']
+        address = request.POST['address']
+        bank_name_id = int(request.POST['bank'])
+        bank_account = request.POST['bank_account']
+        bank_name = Bank.objects.get(id = bank_name_id)
+
+        check_username = Investor.objects.filter(username = username)
+        check_email = Investor.objects.filter(email = email)
+        if check_username.exists():
+            messages.success(request, "This username is already used")
+        elif check_email:
+            messages.success(request, "This Email Address is already used")
+        else: 
+            investor = Investor.objects.create(username = username, password = password, first_name = fname, last_name =lname, email = email, phone=phone, address = address,bank_name_id = bank_name_id, account_number = bank_account)
+            email_subject = "PFA has created your account"
+            active_link = "http://127.0.0.1:8000/investor-active-link/{}/activate".format(investor.id)
+            nfc_and_email_msg = """
+                <p style="font-size:18px;margin-bottom:10px;"><strong>Hello {} {},</strong> <br>
+                Find below details of your  PFA INVESTOR account:<p>
+                Full Name:  {} {} <br>
+                User Name:  {} <br>
+                Email:  {}<br>
+                Phone:  {} <br>
+                Address:  {}<br> 
+                Bank Name: {} <br>
+                Account Number:  {}<br><br>
+                Click the following link to set your password and active your account <br>
+                <a href="{}">{}</a>
+
+            """ .format(fname,lname,fname,lname,username,email,phone,address,bank_name,bank_account,active_link,active_link)
+            form_email = 'pfa.erudite@gmail.com'
+            send_mail(
+                email_subject, 
+                nfc_and_email_msg,
+                form_email,
+                [email],
+                fail_silently=False, 
+                html_message=nfc_and_email_msg, 
+            )
+            messages.success(request, "Investor added successfully. All Information send to the given Email Address")
+            return redirect('investor:add_new_investor')
+    
+    context = {
+        'bank_list':bank_list
+    }
+    
+    return render(request, 'dashboard/add_new_investor.html',context)
+
+def investor_active_link(request, id):
+    investor = Investor.objects.get(id=id)
+    if request.method == 'POST':
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        if password1 == password2:
+            encripted_pass = hashlib.md5(password1.encode())
+            password = encripted_pass.hexdigest() 
+            investor.password = password
+            investor.status = True
+            investor.save()
+            messages.success(request, "Your account is activated and password changed successfully")
+            return redirect('investor:investor_login')
+        else:
+            messages.success(request, "Password doesn't Match")
+
+    return render(request, 'account/investor_active_link.html')
+
+def add_bank(request):
+    if request.method == 'POST':
+        bank = request.POST['bank'] 
+        Bank.objects.create(bank_name=bank)
+        messages.success(request, "Bank Added Successfully")
+    return render(request,'dashboard/add_bank.html')
+
+def bank_list(request):
+    bank_list = Bank.objects.all().order_by('bank_name')
+    context = {
+        'bank_list':bank_list
+    }
+    return render(request, 'dashboard/bank_list.html',context)
+ 
+def bank_edit(request, id):
+    bank = Bank.objects.filter(id = id) 
+    old_name = bank[0].bank_name
+    if request.method == 'POST':
+        bank_name = request.POST['bank']
+        bank.update(bank_name = bank_name)  
+        messages.success(request, "Bank updated uccessfully")
+        return redirect("investor:bank_list") 
+    context = {
+        'bank_name':old_name
+    }
+    return render(request,'dashboard/edit_bank.html',context)
+
+def bank_active(request, id):
+    bank = Bank.objects.get(id = id)
+    bank.status = True
+    bank.save() 
+    messages.success(request, "Bank status changed uccessfully")
+    return redirect("investor:bank_list") 
+
+
+def bank_deactive(request, id):
+    bank = Bank.objects.get(id = id)
+    bank.status = False
+    bank.save() 
+    messages.success(request, "Bank status changed uccessfully")
+    return redirect("investor:bank_list") 
+
