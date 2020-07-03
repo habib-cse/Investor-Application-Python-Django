@@ -42,7 +42,10 @@ class Invest(models.Model):
     payment_status = models.BooleanField(default=False)
     status = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+    reinvest_status = models.BooleanField(default=False)
+    widthdrawn_status = models.BooleanField(default=False) 
+    delete_status = models.BooleanField(default=False)
+    email_send_status = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Invest"
@@ -50,7 +53,8 @@ class Invest(models.Model):
 
     def __str__(self):
         return("{} {} = {}".format(self.investor.first_name, self.investor.last_name, self.amount_to_invest))
-        
+ 
+
 class Notification(models.Model): 
     investor = models.ForeignKey(Investor, on_delete=models.CASCADE)
     title = models.CharField(max_length=250)
@@ -85,4 +89,36 @@ class Message(models.Model):
     def __str__(self):
         return self.message
     
+class Popup(models.Model):
+    TYPE = (
+        ('', 'Select Type'),
+        ('primary','Primary'),
+        ('secondary','Secondary'),
+        ('success','Success'),
+        ('danger','Danger'),
+        ('warning','Warning'),
+        ('info','Info'),
+        ('light','Light'),
+        ('dark','Dark'),
+    )
+    popup_type = models.CharField(max_length=100, choices=TYPE)
+    title = models.CharField(max_length=50)   
+    desc = models.TextField()
+    second_paragraph = models.TextField(blank=True, null=True)
+    third_paragraph = models.TextField(blank=True, null=True)
+    button_text = models.CharField(default = "How to Join" ,max_length=100)
+    button_link = models.CharField(max_length=100)
+    button_type = models.CharField(max_length=100, choices=TYPE)
+    status = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add = True)
+
+    def __str__(self):
+        return self.title
+
+class Termscondition(models.Model):
+    page_title = models.CharField(max_length=300)
+    page_content = models.TextField()
+    status = models.BooleanField(default=True)
     
+    def __str__(self):
+        return self.page_title

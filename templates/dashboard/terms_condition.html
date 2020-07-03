@@ -24,35 +24,16 @@
 
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
-<div class="wrapper">
-
-  <!-- Navbar -->
-  {% include 'dashboard/base/top_menu.html' %}
-  <!-- /.navbar -->
-
-  <!-- Main Sidebar Container -->
-  {% include 'dashboard/base/sidebar.html' %}
-
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper"> 
-    
-    {% block d-content %}
-      
-    {% endblock d-content %}
-      
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <strong>Copyright &copy; 2020 PFA</strong>
-    All rights reserved. 
-  </footer>
-
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
+<div class="wrapper"> 
+    <div class="container">
+        <div class="row">
+            <div class="col mt-5 mb-5">
+                <div class="card card-body">
+                    {{terms_conditons.page_content|safe}}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- ./wrapper -->
 

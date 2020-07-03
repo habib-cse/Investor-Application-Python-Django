@@ -47,7 +47,7 @@
         <!-- small box -->
         <div class="small-box bg-danger">
           <div class="inner text-center">
-            <h4>{{amount_invested|total_amount_invested_admin}}</h4> 
+            <h4>₦{{amount_invested|total_amount_invested_admin}}</h4> 
             <p>Total Amount Invested</p>
           </div>
           <div class="icon">
@@ -60,7 +60,7 @@
         <!-- small box -->
         <div class="small-box bg-secondary">
           <div class="inner text-center">
-            <h4>{{paid_amount|total_interest_paid_admin}}</h4> 
+            <h4>₦{{paid_amount|total_interest_paid_admin}}</h4> 
             <p>Total Interest Paid</p>
           </div>
           <div class="icon">
@@ -73,7 +73,7 @@
         <!-- small box -->
         <div class="small-box bg-primary">
           <div class="inner text-center">
-            <h4>{{invested_amount_admin|active_invested_amount_admin}}</h4> 
+            <h4>₦{{invested_amount_admin|active_invested_amount_admin}}</h4> 
             <p>Active Invested Amount</p> 
           </div>
           <div class="icon">
@@ -85,7 +85,7 @@
       <div class="col-lg-2 col-6"> 
         <div class="small-box bg-dark">
           <div class="inner text-center">
-            <h4>{{total_interest_admin|total_interest_topay_admin}}</h4>  
+            <h4>₦{{total_interest_admin|total_interest_topay_admin}}</h4>  
             <p style="font-size:15px">Total Interest To Pay</p> 
           </div>
           <div class="icon">
@@ -97,7 +97,7 @@
       <div class="col-lg-2 col-6"> 
         <div class="small-box bg-warning">
           <div class="inner text-center">
-            <h4>{{pending_amount_admin|pending_amount_admin}}</h4>  
+            <h4>₦{{pending_amount_admin|pending_amount_admin}}</h4>  
             <p>Pending Amount</p> 
           </div>
           <div class="icon">
@@ -136,12 +136,37 @@
               <tr>
                 <td class=" align-middle">{{forloop.counter}}</td>
                 <td class=" align-middle">{{item.investor.first_name}} {{item.investor.last_name}}</td>
-                <td class=" align-middle">{{item.amount_to_invest|coma_separator_value}}</td>
+                <td class=" align-middle">₦{{item.amount_to_invest|coma_separator_value}}</td>
                 <td class=" align-middle">{{item.date_of_invest |date}}</td>
-                <td class=" align-middle">{{item.expected_interest | coma_separator_value}}</td>
+                <td class=" align-middle">₦{{item.expected_interest | coma_separator_value}}</td>
                 <td class=" align-middle">
-                  <a href="{% url 'investor:approve_investment' item.id %}" class="btn btn-sm btn-success">Approve</a>
-                  <a href="{% url 'investor:cancle_investment' item.id %}" class="btn btn-sm btn-success">Cancel</a>
+                  <div class="modal fade" id="approve-{{item.id}}" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content"> 
+                        <div class="modal-body">
+                            <p>Are you sure you want to Approve of ₦{{item.amount_to_invest|coma_separator_value}} </p>  
+                            <hr>
+                            <a href="{% url 'investor:approve_investment' item.id %}" class="btn btn-sm btn-info mr-3 pr-3 pl-3">Yes</a>
+                            <button type="button" data-dismiss="modal" class="btn btn-info btn-sm pr-3 pl-3">No</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>  
+                  <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#approve-{{item.id}}">Approve</button>
+                  <div class="modal fade" id="cancale-{{item.id}}" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content"> 
+                        <div class="modal-body">
+                            <p>Are you sure you want to Cancel investment of ₦{{item.amount_to_invest|coma_separator_value}}</p>  
+                            <hr>
+                            <a href="{% url 'investor:cancle_investment' item.id %}" class="btn btn-sm btn-info mr-3 pr-3 pl-3">Yes</a>
+                            <button type="button" data-dismiss="modal" class="btn btn-info btn-sm pr-3 pl-3">No</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>  
+                  <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#cancale-{{item.id}}">Cancel</button>
+
                 </td>
               </tr>
               {% endfor %} 
@@ -173,7 +198,7 @@
               <tr>  
                 <td>{{forloop.counter}}</td>
                 <td>{{item|top_investor_name}}</td>
-                <td>{{item|top_investor_amount}}</td>
+                <td>₦{{item|top_investor_amount}}</td>
               </tr>
               {% endfor %}
                
@@ -217,13 +242,25 @@
               <tr>
                 <td class=" align-middle">{{forloop.counter}}</td>
                 <td class=" align-middle">{{item.investor.first_name}} {{item.investor.last_name}}</td>
-                <td class=" align-middle">{{item.amount_to_invest|coma_separator_value}}</td>
+                <td class=" align-middle">₦{{item.amount_to_invest|coma_separator_value}}</td>
                 <td class=" align-middle">{{item.date_of_invest |date}}</td>
                 <td class=" align-middle">{{item.withdraw_date |date}}</td>
                 <td class=" align-middle">{{item.id|days_remaining}} days left</td>
-                <td class=" align-middle">{{item.expected_interest | coma_separator_value}}</td>
-                <td class=" align-middle">
-                  <a href="{% url 'investor:make_payment' item.id %}" class="btn btn-sm btn-success">Pay</a> 
+                <td class=" align-middle">₦{{item.expected_interest | coma_separator_value}}</td>
+                <td class=" align-middle"> 
+                  <div class="modal fade" id="pay-{{item.id}}" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content"> 
+                        <div class="modal-body">
+                            <p>Are you sure you want to Pay ₦{{item.expected_interest | coma_separator_value}} to {{item.investor.first_name}}</p>  
+                            <hr>
+                            <a href="{% url 'investor:make_payment' item.id %}" class="btn btn-sm btn-info mr-3 pr-3 pl-3">Yes</a>
+                            <button type="button" data-dismiss="modal" class="btn btn-info btn-sm pr-3 pl-3">No</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>  
+                  <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#pay-{{item.id}}">Pay</button> 
                 </td>
               </tr>
               {% endfor %} 
@@ -251,7 +288,7 @@
           <!-- small box -->
           <div class="small-box bg-info">
             <div class="inner text-center">
-              <h4>{{request.session.investor|total_invest_amount }}</h4> 
+              <h4>₦{{request.session.investor|total_invest_amount }}</h4> 
               <p>Total Amount Invested</p>
             </div>
             <div class="icon">
@@ -265,46 +302,46 @@
           <!-- small box -->
           <div class="small-box bg-danger">
             <div class="inner text-center">
-              <h4>{{request.session.investor|total_interest_amount}}</h4>
+              <h4>₦{{request.session.investor|total_interest_amount}}</h4>
 
               <p>Total Interest Received</p>
             </div>
             <div class="icon">
               <i class="ion ion-stats-bars"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{% url 'investor:interest_received_investor' request.session.investor %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <div class="col-lg-2 col-6">
           <!-- small box -->
           <div class="small-box bg-secondary">
             <div class="inner text-center">
-              <h4>{{request.session.investor|active_invested_amount}}</h4> 
+              <h4>₦{{request.session.investor|active_invested_amount}}</h4> 
               <p>Active Invested Amount</p>
             </div>
             <div class="icon">
               <i class="ion ion-stats-bars"></i>
             </div>
-            <a href="" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{% url 'investor:investor_active_invest' request.session.investor %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <div class="col-lg-2 col-6">
           <!-- small box -->
           <div class="small-box bg-primary">
             <div class="inner text-center">
-              <h4>{{request.session.investor|upcoming_interest_amount}}</h4> 
+              <h4>₦{{request.session.investor|upcoming_interest_amount}}</h4> 
               <p>Upcoming Interest</p> 
             </div>
             <div class="icon">
               <i class="ion ion-stats-bars"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{% url 'investor:investor_active_invest' request.session.investor %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
           </div>
         </div> 
         <div class="col-lg-2 col-6"> 
           <div class="small-box bg-dark">
             <div class="inner text-center">
-              <h4>{{request.session.investor|next_payment_amount}}</h4>  
+              <h4>₦{{request.session.investor|next_payment_amount}}</h4>  
               <p style="font-size:14.6px">Next Payment, {% if request.session.investor|days_left %}{{request.session.investor|days_left}} days left {% endif %} 
                 
               </p> 
@@ -312,19 +349,19 @@
             <div class="icon">
               <i class="ion ion-stats-bars"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{% url 'investor:investor_active_invest' request.session.investor %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
           </div>
         </div> 
         <div class="col-lg-2 col-6"> 
           <div class="small-box bg-warning">
             <div class="inner text-center">
-              <h4>{{request.session.investor|pending_approval}}</h4>  
+              <h4>₦{{request.session.investor|pending_approval}}</h4>  
               <p>Pending Approval</p> 
             </div>
             <div class="icon">
               <i class="ion ion-stats-bars"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{% url 'investor:investor_pending_invest' request.session.investor %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
           </div>
         </div> 
 
@@ -332,20 +369,30 @@
       <!-- Main row -->
       <div class="row"> 
         <div class="col">
-          <div class="alert_area text-center">
-            <div class="alert alert-danger alert-dismissible fade show no-border" role="alert">
-              <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-              
-              <h2>Win 100000 USD BY INVESTING HERE</h2>
-              <P class="mb-2">Lorem ipsum dolor sit, <strong>amet consectetur adipisicing elit.</strong> Incidunt harum illo vero itaque molestias autem ipsum vitae saepe. Consequuntur, magnam.</P>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita dolorum nihil praesentium animi qui in possimus fuga doloremque atque inventore quaerat reiciendis minus vero nobis assumenda vel, illum sapiente et?</p>
-              <a href="" class="btn btn-primary">How to Join</a>
+          
+          {% for popup in popup_list|active_popup_list %}
+            <div class="alert_area text-center">
+              <div class="alert alert-{{popup.popup_type}} alert-dismissible fade show no-border" role="alert">
+                <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                
+                <h2>{{popup.title}}</h2>
+                <P class="mb-2">{{popup.desc|safe}}</P> 
+                {% if popup.second_paragraph %}
+                  <P class="mb-2">{{popup.second_paragraph|safe}}</P>
+                {% endif %}
+                {% if popup.third_paragraph %}
+                <p class="mb-2">{{popup.third_paragraph|safe}}</p>
+                {% endif %}
+                  
+                <a href="" class="btn btn-{{popup.button_type}}">{{popup.button_text}}</a>
+              </div>
             </div>
-          </div>
+          {% endfor %} 
         </div>
       </div> 
+      
       <div class="row">
         <div class="col-md-7 col-sm-12">
           <div class="card p-3 alert alert-dismissible fade show no-border" role="alert">
@@ -354,31 +401,33 @@
             </button>
             <h4>Active Invest</h4>
           <hr>
-          <table class="table table-bordered table-striped">
-            <thead class="table-dark">
-              <th>SL</th>
-              <th>Invested Amount</th>
-              <th>Invested Date</th>
-              <th>Expected Interest</th>
-              <th>Payment Receive</th>
-            </thead>
-            <tbody>
-              
-              {% for item in request.session.investor|active_invest_list %}
-              <tr>
-                <td class=" align-middle">{{forloop.counter}}</td>
-                <td class=" align-middle">{{item.amount_to_invest|coma_separator_value}}</td>
-                <td class=" align-middle">{{item.date_of_invest |date}}</td>
-                <td class=" align-middle">{{item.expected_interest | coma_separator_value}}</td>
-                <td class=" align-middle">{{item.withdraw_date | date}}
-                  <p style="font-size:12px;margin:0;color:red">{{item.id|days_remaining}} days left</p> 
-                </td>
-              </tr>
-              {% endfor %} 
-              
-            </tbody>
-          </table>
-          <a href="#" class="btn btn-success d-block">View All Active Invests <i class="fas fa-arrow-circle-right ml-2"></i></a>
+          <div class="table_body_area">
+            <table class="table table-bordered table-striped">
+              <thead class="table-dark">
+                <th>SL</th>
+                <th>Invested Amount</th>
+                <th>Invested Date</th>
+                <th>Expected Interest</th>
+                <th>Payment Receive</th>
+              </thead>
+              <tbody>
+                
+                {% for item in request.session.investor|active_invest_list %}
+                <tr>
+                  <td class=" align-middle">{{forloop.counter}}</td>
+                  <td class=" align-middle">₦{{item.amount_to_invest|coma_separator_value}}</td>
+                  <td class=" align-middle">{{item.date_of_invest |date}}</td>
+                  <td class=" align-middle">₦{{item.expected_interest | coma_separator_value}}</td>
+                  <td class=" align-middle">{{item.withdraw_date | date}}
+                    <p style="font-size:12px;margin:0;color:red">{{item.id|days_remaining}} days left</p> 
+                  </td>
+                </tr>
+                {% endfor %} 
+                
+              </tbody>
+            </table>
+          </div>
+          <a href="{% url 'investor:investor_active_invest' request.session.investor %}" class="btn btn-success d-block">View All Active Invests <i class="fas fa-arrow-circle-right ml-2"></i></a>
 
           </div>
         </div>
@@ -387,27 +436,45 @@
             <button type="button" class="close color-white" data-dismiss="alert" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-            <h4>Pending Invest Approval</h4>
+            <h4>Pending Invest</h4>
             <hr>
-            <table class="table table-bordered table-striped">
-              <thead class="table-dark">
-                <th>SL</th>
-                <th>Invested Amount</th>
-                <th>Invested Date</th>
-                <th>Action</th> 
-              </thead>
-              <tbody> 
-                {% for item in request.session.investor|pending_invest_list %}
-                <tr>
-                  <td>{{forloop.counter}}</td>
-                  <td>{{item.amount_to_invest|coma_separator_value}}</td>
-                  <td>{{item.date_of_invest |date}}</td>
-                  <td><a href="" class="btn btn-success btn-sm">Cancle </a></td>
-                </tr>
-                {% endfor %} 
-              </tbody>
-            </table>
-            <a href="#" class="btn btn-success d-block">View All Pending Invests <i class="fas fa-arrow-circle-right ml-2"></i></a>
+            <div class="table_body_area">
+              <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                  <th>SL</th>
+                  <th>Invested Amount</th>
+                  <th>Invested Date</th>
+                  <th>Action</th> 
+                </thead>
+                <tbody> 
+                  {% for item in request.session.investor|pending_invest_list %}
+                  <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>₦{{item.amount_to_invest|coma_separator_value}}</td>
+                    <td>{{item.date_of_invest |date}}</td>
+                    <td>
+                          
+                      <div class="modal fade text-center" id="cancale-{{item.id}}" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content"> 
+                            <div class="modal-body">
+                                <p>Are you sure you want to Cancel</p>  
+                                <hr>
+                                <a href="{% url 'investor:investor_cancle_investment' item.id %}" class="btn btn-sm btn-info mr-3 pr-3 pl-3">Yes</a>
+                                <button type="button" data-dismiss="modal" class="btn btn-info btn-sm pr-3 pl-3">No</button>
+                            </div>
+                            </div>
+                        </div>
+                    </div>  
+                      <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#cancale-{{item.id}}">Cancel</button>
+     
+                    </td>
+                  </tr>
+                  {% endfor %} 
+                </tbody>
+              </table>
+            </div>
+            <a href="{% url 'investor:investor_pending_invest' request.session.investor %}" class="btn btn-success d-block">View All Pending Invests <i class="fas fa-arrow-circle-right ml-2"></i></a>
 
           </div>
         </div>

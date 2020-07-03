@@ -1,6 +1,6 @@
 from django import template
 register = template.Library()  
-from investor.models import Bank,Investor,Invest,Notification, Message
+from investor.models import Bank,Investor,Invest,Notification, Message, Popup
 from datetime import datetime
 
 
@@ -30,7 +30,7 @@ def total_amount_invested_admin(self):
 
 @register.filter
 def active_invested_amount_admin(self):
-    invests = Invest.objects.filter(status=True, payment_status=False)
+    invests = Invest.objects.filter(status=True, payment_status=False,reinvest_status=False, delete_status=False)
     total_invest = 0
     if invests.exists():
         for invest in invests:
@@ -39,7 +39,7 @@ def active_invested_amount_admin(self):
 
 @register.filter
 def total_interest_topay_admin(self):
-    invests = Invest.objects.filter(status=True, payment_status=False)
+    invests = Invest.objects.filter(status=True, payment_status=False,reinvest_status=False, delete_status=False)
     total_invest = 0
     if invests.exists():
         for invest in invests:
@@ -88,7 +88,7 @@ def total_interest_amount(id):
 
 @register.filter
 def active_invested_amount(id):
-    invests = Invest.objects.filter(investor_id = id,status=True, payment_status=False)
+    invests = Invest.objects.filter(investor_id = id,status=True, payment_status=False,reinvest_status=False, delete_status=False)
     total_invest = 0
     if invests.exists():
         for invest in invests:
@@ -97,7 +97,7 @@ def active_invested_amount(id):
 
 @register.filter
 def upcoming_interest_amount(id):
-    invests = Invest.objects.filter(investor_id = id,status=True,payment_status=False)
+    invests = Invest.objects.filter(investor_id = id,status=True,payment_status=False,reinvest_status=False, delete_status=False)
     total_invest = 0
     if invests.exists():
         for invest in invests:
@@ -106,20 +106,20 @@ def upcoming_interest_amount(id):
     return("{:,}".format(total_invest)) 
 
 
-@register.filter
-def upcoming_interest_amount(id):
-    invests = Invest.objects.filter(investor_id = id, status=True,payment_status=False) 
-    total_invest = 0
-    if invests.exists():
-        for invest in invests: 
-            total_invest += invest.expected_interest
+# @register.filter
+# def upcoming_interest_amount(id):
+#     invests = Invest.objects.filter(investor_id = id, status=True,payment_status=False) 
+#     total_invest = 0
+#     if invests.exists():
+#         for invest in invests: 
+#             total_invest += invest.expected_interest
         
-    return("{:,}".format(total_invest)) 
+#     return("{:,}".format(total_invest)) 
 
  
 @register.filter
 def next_payment_amount(id):
-    invests = Invest.objects.filter(investor_id = id,status=True).order_by('withdraw_date').first()
+    invests = Invest.objects.filter(investor_id = id,status=True,reinvest_status=False, delete_status=False).order_by('withdraw_date').first()
     total_invest = 0
     if invests:
         total_invest = invests.expected_interest 
@@ -153,12 +153,12 @@ def pending_approval(id):
 
 @register.filter
 def active_invest_list(id):
-    invest_list = Invest.objects.filter(investor_id=id, status=True, payment_status=False).order_by('withdraw_date')[0:10]
+    invest_list = Invest.objects.filter(investor_id = id, status=True, payment_status=False,reinvest_status=False, delete_status=False).order_by('withdraw_date')[0:10]
     return invest_list
 
 @register.filter
 def pending_invest_list(id):
-    pending_invest_list = Invest.objects.filter(investor_id=id, status=False, payment_status=False).order_by('-date_of_invest')
+    pending_invest_list = Invest.objects.filter(investor_id=id, status=False, payment_status=False).order_by('-date_of_invest')[0:10]
     return pending_invest_list
 
 @register.filter
@@ -238,7 +238,7 @@ def investor_invest_amount(id):
 
 @register.filter
 def active_invested_list(self): 
-    investor = Invest.objects.filter(payment_status=False, status=True).order_by('withdraw_date')[0:20]
+    investor = Invest.objects.filter(status=True, payment_status=False,reinvest_status=False).order_by('withdraw_date')[0:20]
     return investor 
 
 @register.filter
@@ -261,3 +261,8 @@ def show_unread_investor_message(id):
     if unread_messages:
         return unread_messages
 
+
+@register.filter
+def active_popup_list(request):
+    popup_list = Popup.objects.filter(status=True).order_by('-timestamp') 
+    return popup_list

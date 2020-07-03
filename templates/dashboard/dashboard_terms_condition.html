@@ -1,0 +1,36 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+{% load humanize %}
+{% block d-title %}
+    Terms & Conditions
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-md-9 col-sm-12"> 
+          <h5 class="m-0 text-dark float-left">Terms & Condition Page</h5>  
+        </div> 
+        <div class="col-md-2 text-right col-sm-12"> 
+            <a href="{% url 'investor:update_terms_condition' terms_conditons.id %}" class="btn btn-info float-right btn-sm">Edit Page</a>
+        </div> 
+            
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div> 
+<section class="invest_request_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-11 col-sm-12">
+                <div class="card"> 
+                    <div class="card-body"> 
+                            {{terms_conditons.page_content|safe}} 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> 
+{% endblock d-content %} 

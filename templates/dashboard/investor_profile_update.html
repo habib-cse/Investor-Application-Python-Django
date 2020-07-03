@@ -2,7 +2,7 @@
 {% load extra_tags %}
 
 {% block d-title %}
-    Add new Investor
+    Investor Account Update
 {% endblock d-title %} 
 
 {% block d-content %} 
@@ -11,7 +11,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-12"> 
-          <h1 class="m-0 text-dark">Add new Investor</h1> 
+          <h1 class="m-0 text-dark">Investor Account Update</h1> 
         </div> 
       </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -39,46 +39,50 @@
                         <div class="form-group row">
                             <label for="inputName" class="col-sm-3 col-form-label">User Name</label>
                             <div class="col-sm-9">
-                                <input type="text" name="username" class="form-control" required>
+                                <input type="text" name="username" value="{{investor.username}}" class="form-control" readonly>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="inputName" class="col-sm-3 col-form-label">First Name</label>
                             <div class="col-sm-9">
-                                <input type="text" name="fname" class="form-control" required>
+                                <input type="text" name="fname" value="{{investor.first_name}}" class="form-control" required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="inputName" class="col-sm-3 col-form-label">Last Name</label>
                             <div class="col-sm-9">
-                                <input type="text" name="lname" class="form-control" required>
+                                <input type="text" name="lname" value="{{investor.last_name}}" class="form-control" required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="inputName" class="col-sm-3 col-form-label">Email</label>
                             <div class="col-sm-9">
-                                <input type="email" name="email" class="form-control">
+                                <input type="email" name="email" value="{{investor.email}}" class="form-control" readonly>
                             </div>
                         </div>  
                         <div class="form-group row">
                             <label for="inputName" class="col-sm-3 col-form-label">Phone</label>
                             <div class="col-sm-9">
-                                <input type="tel" name="phone" class="form-control">
+                                <input type="tel" name="phone" value="{{investor.phone}}" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="inputName" class="col-sm-3 col-form-label">Address</label>
                             <div class="col-sm-9">
-                                <input type="text" name="address" class="form-control">
+                                <input type="text" name="address" value="{{investor.address}}" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="inputName" class="col-sm-3 col-form-label">Select Bank</label>
                             <div class="col-sm-9">
-                                <select name="bank" class="form-control w-100" id="">
-                                    <option value="">Select your Bank</option>  
+                                <select name="bank" class="form-control w-100" id=""> 
                                     {% for bank in bank_list %}
-                                        <option value="{{bank.id}}">{{bank}}</option>
+                                        
+                                        {% if bank.id == investor.bank_name.id  %}
+                                            <option value="{{bank.id}}" selected>{{bank}}</option>
+                                        {% else %}
+                                            <option value="{{bank.id}}">{{bank}}</option>
+                                        {% endif %} 
                                     {% endfor %}    
                                 </select>
                             </div>
@@ -86,17 +90,13 @@
                         <div class="form-group row">
                             <label for="inputName" class="col-sm-3 col-form-label">Bank Account Number</label>
                             <div class="col-sm-9">
-                                <input type="text" id="bank_account" onkeyup="bankAccountNumberCheck()" name="bank_account" placeholder="Account Number" class="form-control" maxlength="10" required>
-                                <p id="bank_error"></p>
+                                <input type="number" name="bank_account" value="{{investor.account_number}}" class="form-control" required>
                             </div>
-
-
-                            
                         </div> 
 
                         <div class="form-group row"> 
                             <div class="col-sm-9 offset-sm-3">
-                                <input class="btn btn-success" type="submit" value="Add Investor">
+                                <input class="btn btn-success" type="submit" value="Update Account">
                             </div>
                         </div> 
                     </div>
@@ -109,23 +109,6 @@
   
 {% block d-script %}
    <script>
-    function bankAccountNumberCheck(){
-        value = document.getElementById('bank_account').value
-        value_len = value.length
-        if(value_len == 10){
-          document.getElementById('bank_error').innerHTML = "Perfect account number"
-          document.getElementById('bank_error').style.color = 'navy'
-          document.getElementById('bank_account').style.border = "1px solid #939ba2"
-        }
-        else{
-          document.getElementById('bank_error').innerHTML = "Account number must be 10 digits"
-          document.getElementById('bank_account').style.border = "1px solid red"
-          document.getElementById('bank_error').style.color = 'red'
-  
-        }
-        if(value_len < 1){
-          document.getElementById('bank_error').innerHTML = "" 
-        }
-      }
+       
    </script>
 {% endblock d-script %}

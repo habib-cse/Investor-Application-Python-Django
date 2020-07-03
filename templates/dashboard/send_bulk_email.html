@@ -1,0 +1,88 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+{% load humanize %}
+{% block d-title %}
+    investor List
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+
+<form action="" method="POST"> {% csrf_token %}
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-12"> 
+                    <h1 class="m-0 mb-2 text-dark float-left w-75">Send Email to all Investor</h1>  
+                </div> 
+            </div><!-- /.row -->
+            <div class="row">
+                <div class="col-md-6 col-sm-12">
+                <!-- <input type="text" name="sender_email" placeholder="Sender Email Address" class="for-control mb-3"> -->
+                <input type="text" name="subject" placeholder="Email Subject" class="form-control mb-3">
+                <input type="submit" class="btn btn-success" value="Send Mail">
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <textarea name="message" placeholder="Email Message" class="form-control" id="" cols="30" rows="3"></textarea>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </div>  
+    <section class="invest_request_area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    {% for message in messages %}
+                        <p class="float-left mb-1" style="color: red;">{{message}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-bordered table-striped text-center">
+                        <thead class="table-dark">
+                            <th style="width:8%;" class="text-center">Check all<input onclick="selectAll()" id="main_check" type="checkbox" class=" form-check d-block m-auto"></th>
+                            <th>Full Name</th> 
+                            <th>Email Address</th> 
+                            <th>Bank Name</th>
+                            <th style="width: 11%;">Bank Account</th> 
+                            <th>Amount</th>  
+                        </thead>
+                        <tbody> 
+                            {% for investor in investor_list %} 
+                                <tr>
+                                    <td class="align-middle"><input type="checkbox" id="check" name="email[]" value="{{investor.email}}" class="form-check m-auto"></td>
+                                    <td class="align-middle">{{investor.first_name}} {{investor.last_name}}</td>
+                                    <td class="align-middle">{{investor.email}}</td> 
+                                    <td class="align-middle">{{investor.bank_name}}</td>
+                                    <td class="align-middle">{{investor.account_number}}</td>  
+                                    <td class="align-middle">₦{{investor.id|investor_invest_amount}}</td> 
+                                </tr>
+                            {% endfor %} 
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>  
+</form>
+{% endblock d-content %} 
+{% block d-script %}
+    <script> 
+        function selectAll(){
+            main_check = document.getElementById("main_check").checked;  
+            if(main_check){
+                checkboxes = document.getElementsByName('email[]');
+                for(var i in checkboxes)
+			        checkboxes[i].checked = true
+            }
+            else{
+                checkboxes = document.getElementsByName('email[]');
+                for(var i in checkboxes)
+			        checkboxes[i].checked = false
+            }
+        }
+
+    </script>
+
+{% endblock d-script %}

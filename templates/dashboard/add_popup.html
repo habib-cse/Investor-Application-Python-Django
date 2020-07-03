@@ -1,0 +1,112 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+{% load crispy_forms_field %}
+{% block d-title %}
+    Add new Investor
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-12"> 
+          <h1 class="m-0 text-dark float-left w-75">Add New PopUp</h1> 
+          <a href="{% url 'investor:popup_list' %}" class="btn btn-success float-right text-right">Popup list</a>
+        </div> 
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div> 
+<section class="message_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% if messages %}  
+                    {% for message in messages %}
+                        <p class="pb-1" style="color: red;">{{message}}</p>
+                    {% endfor %} 
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+<section class="invest_request_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-10">
+                <form action="" method="POST">
+                    {% csrf_token %} 
+                    <div class="card card-body">
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Button Type</label>
+                            <div class="col-sm-9">
+                                {% crispy_field form.popup_type %}
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Pop up Title</label>
+                            <div class="col-sm-9">
+                                {% crispy_field form.title %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Pop Up Description</label>
+                            <div class="col-sm-9">
+                                {% crispy_field form.desc %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">First Aditional Description</label>
+                            <div class="col-sm-9">
+                                {% crispy_field form.second_paragraph %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Second Aditional Description</label>
+                            <div class="col-sm-9">
+                                {% crispy_field form.third_paragraph %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Button Text</label>
+                            <div class="col-sm-9">
+                                {% crispy_field form.button_text %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Button URL</label>
+                            <div class="col-sm-9">
+                                {% crispy_field form.button_link %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Button Type</label>
+                            <div class="col-sm-9">
+                                {% crispy_field form.button_type %}
+                            </div>
+                        </div> 
+
+                        <div class="form-group row"> 
+                            <div class="col-sm-9 offset-sm-3">
+                                
+                                {% if update %}
+                                    <input class="btn btn-success" type="submit" value="Update PopUp">
+                                {% else %}
+                                    <input class="btn btn-success" type="submit" value="Add PopUp">
+                                {% endif %}
+                                    
+                            </div>
+                        </div> 
+                    </div> -->
+                </form>
+            </div>
+        </div>
+    </div>
+</section>  
+{% endblock d-content %}
+  
+{% block d-script %}
+   <script>
+       
+   </script>
+{% endblock d-script %}

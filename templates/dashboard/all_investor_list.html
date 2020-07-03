@@ -11,7 +11,8 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-12"> 
-          <h1 class="m-0 text-dark">Investor List</h1> 
+          <h1 class="m-0 text-dark float-left w-75">Investor List</h1> 
+          <a href="{% url 'investor:send_bulk_email' %}" class="btn btn-success float-right text-right">Send Bulk Email</a>
         </div> 
       </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -50,7 +51,7 @@
                                 <td class="align-middle">{{investor.address}}</td>
                                 <td class="align-middle">{{investor.bank_name}}</td>
                                 <td class="align-middle">{{investor.account_number}}</td>  
-                                <td class="align-middle">{{investor.id|investor_invest_amount}}</td>
+                                <td class="align-middle">₦{{investor.id|investor_invest_amount}}</td>
                                 <td class="align-middle">  
                                     <div class="modal fade" id="investor-{{investor.id}}" tabindex="-1" role="dialog">
                                         <div class="modal-dialog" role="document">

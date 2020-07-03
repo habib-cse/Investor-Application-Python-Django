@@ -18,15 +18,15 @@
     <form action="" method="POST">
       {% csrf_token %}
       <div id="first_page">
-        <div class="input-group mb-3">
-          <input type="text" name='username' class="form-control" placeholder="Username" required>
+        <div class="input-group mb-3" id="username_group">
+          <input type="text" name='username' id="username" class="form-control" placeholder="Username" required>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>
             </div>
           </div>
         </div> 
-        <div class="input-group mb-3">
+        <div class="input-group mb-3" id="password_group">
           <input type="password" name="password" id='pass1' class="form-control" placeholder="Password" required>
           <div class="input-group-append">
             <div class="input-group-text">
@@ -34,8 +34,8 @@
             </div>
           </div>
         </div>
-        <div class="input-group mb-1">
-          <input type="password" id="pass2" onkeyup="checkPassword()" class="form-control" placeholder="Retype password" required>
+        <div class="input-group mb-1" id="pass2_group">
+          <input type="password" id="pass2" name="password2" onkeyup="checkPassword()" class="form-control" placeholder="Retype password" required>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
@@ -79,8 +79,10 @@
             <input type="date" name="invest_date" onchange="autoDate()" id="invest_date" class="form-control" required>
           </div> 
           <div class="form-group">
-            <p class="mb-1">Expacted Withdrawal Date</p>
-            <input type="text" name="withdraw_date" placeholder="" id="withdraw_data" class="form-control" readonly>
+            <p class="mb-1">Expacted Withdrawal Date</p> 
+            <input type="text" name="withdraw_date_show" placeholder="" id="withdraw_data" class="form-control" readonly>
+            <input type="hidden" name="withdraw_date" id="withdraw_data_main" class="form-control" readonly>
+          
           </div>
           <div class="form-group">
             <select name="bank_name" class="form-control" id=" required>
@@ -91,11 +93,12 @@
                 
             </select>
           </div>
-          <div class="form-group">
-            <input type="text" name="bank_account" placeholder="Account Number" class="form-control" maxlength="10" required>
+          <div class="form-group" id="account_number_group">
+            <input type="text" id="bank_account" onkeyup="bankAccountNumberCheck()" name="bank_account" placeholder="Account Number" class="form-control" maxlength="10" required>
+            <p id="bank_error"></p>
           </div> 
           <div class="form-group">
-            <input type="checkbox" name="" id="" required><a target="_blank" href=""> Agree with the terms anc condition</a>
+            <input type="checkbox" name="" id="" class="form-control d-inline-block" style="width:50px;float:left" required> <span style="vertical-align:middle;padding-top:7px;">  Agree with the <a target="_blank" href="{% url 'investor:terms_condition' %}">terms and condition</a></span>
           </div>
           <div class="form-group d-block overflow-hidden">
             <p onclick="openFirstPage()" class="btn btn-primary float-left">Back</p>  
@@ -129,24 +132,28 @@
       var main_date = document.getElementById('invest_date').value; 
       console.log(main_date)
       var chooseDate=new Date(main_date);
-      var date_in_milisec = chooseDate.setDate(chooseDate.getDate()+30);
+      var date_in_milisec = chooseDate.setMonth(chooseDate.getMonth()+1);
       var full_date = new Date(date_in_milisec)   
 
       var date = new Date(full_date),
       mnth = ("0" + (date.getMonth() + 1)).slice(-2),
       day = ("0" + date.getDate()).slice(-2);
+      var show_date =  [mnth, day, date.getFullYear()].join(" / ") 
       var finial_date =  [date.getFullYear(), mnth, day].join("-") 
 
       var date_size = finial_date.length
       console.log(date_size)
       if(date_size > 9){ 
-        document.getElementById("withdraw_data").setAttribute('value',finial_date)
+        document.getElementById("withdraw_data").setAttribute('value',show_date)
+        document.getElementById("withdraw_data_main").setAttribute('value',finial_date)
       }
       else{
         document.getElementById("withdraw_data").setAttribute('value'," ")
+        document.getElementById("withdraw_data_main").setAttribute('value'," ")
       }
     }
-    
+
+
 
     function checkPassword(){
       var pass1 = document.getElementById('pass1').value
@@ -173,11 +180,31 @@
     function openSecondPage(){
       var p1 = document.getElementById("first_page")
       var p2 = document.getElementById("second_page") 
-      p1.style.display = 'none' 
-      p2.style.display = 'block'
-      document.getElementById("main_logoa").style.marginTop = '260px'
+      var username = document.getElementById('username').value  
+      var password = document.getElementById('pass1').value
+      var password2 = document.getElementById('pass2').value 
+      len1 = username.length
+      len2 = password.length
+      len3 = password2.length 
 
-
+      if(len1 < 1){
+        document.getElementById('username_group').style.border = "1px solid red"
+      }
+      if(len2 < 1){
+        document.getElementById('password_group').style.border = "1px solid red"
+      }
+      if(len3 < 1){
+        document.getElementById('pass2_group').style.border = "1px solid red"
+      }
+      if(len2 < 1 || len2 < 1|| len3 < 1){
+        document.getElementById("pass_error").style.color = 'red'
+        document.getElementById("pass_error").innerHTML= "Please Fix the Error"
+      }
+      else{
+        p1.style.display = 'none' 
+        p2.style.display = 'block'
+        document.getElementById("main_logoa").style.marginTop = '260px'
+      } 
     }
 
     function openFirstPage(){
@@ -188,7 +215,25 @@
       document.getElementById("main_logoa").style.marginTop = '0px'
 
     }
+ 
+    function bankAccountNumberCheck(){
+      value = document.getElementById('bank_account').value
+      value_len = value.length
+      if(value_len == 10){
+        document.getElementById('bank_error').innerHTML = "Perfect account number"
+        document.getElementById('bank_error').style.color = 'navy'
+        document.getElementById('bank_account').style.border = "1px solid #939ba2"
+      }
+      else{
+        document.getElementById('bank_error').innerHTML = "Account number must be 10 digits"
+        document.getElementById('bank_account').style.border = "1px solid red"
+        document.getElementById('bank_error').style.color = 'red'
 
+      }
+      if(value_len < 1){
+        document.getElementById('bank_error').innerHTML = "" 
+      }
+    }
 
   </script>  
  

@@ -1,0 +1,109 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+{% load humanize %}
+{% block d-title %}
+    Pending Invest Request
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-12"> 
+          <h1 class="m-0 text-dark">Pending Payment List</h1> 
+        </div> 
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div> 
+<section class="invest_request_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% for message in messages %}
+                    <p class="float-left mb-1" style="color: red;">{{message}}</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table class="">
+
+                </table>
+                <table class="table table-bordered table-striped text-center">
+                    <thead class="table-dark text-center">
+                      <th>SL</th> 
+                      <th>Invested Amount</th>
+                      <th>Received Amount</th> 
+                      <th>Action</th>
+                    </thead>
+                    <tbody class="text-center">
+                      
+                      {% for item in pending_payment %}
+                      <tr>
+                        <td class=" align-middle">{{forloop.counter}}</td> 
+                        <td class=" align-middle">₦{{item.amount_to_invest|coma_separator_value}}</td> 
+                        <td class=" align-middle">₦{{item.expected_interest | coma_separator_value}}</td> 
+                        <td class=" align-middle">
+                          
+                          <div class="modal fade" id="widthdraw_request-{{item.id}}" tabindex="-1" role="dialog">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content"> 
+                                <div class="modal-body">
+                                    <p>Are you sure you want to Widthdraw all Amount</p>  
+                                    <hr>
+                                    <a href="{% url 'investor:investor_widthdraw_all' item.id %}" class="btn btn-sm btn-info mr-3 pr-3 pl-3">Yes</a>
+                                    <button type="button" data-dismiss="modal" class="btn btn-info btn-sm pr-3 pl-3">No</button>
+                                </div>
+                                </div>
+                            </div>
+                        </div>  
+                        <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#widthdraw_request-{{item.id}}">Widthdraw all Balance</button>
+         
+                        <div class="modal fade" id="invest_request-{{item.id}}" tabindex="-1" role="dialog">
+                          <div class="modal-dialog" role="document">
+                              <div class="modal-content"> 
+                              <div class="modal-body">
+                                  <p>Are you sure you want to Invest all Amount</p>  
+                                  <hr>
+                                  <a href="{% url 'investor:invest_all_balance' item.id %}" class="btn btn-sm btn-info mr-3 pr-3 pl-3">Yes</a>
+                                  <button type="button" data-dismiss="modal" class="btn btn-info btn-sm pr-3 pl-3">No</button>
+                              </div>
+                              </div>
+                          </div>
+                      </div>  
+                      <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#invest_request-{{item.id}}">Invest all Balance</button>
+        
+                      <div class="modal fade" id="investor_widthdraw_interest-{{item.id}}" tabindex="-1" role="dialog">
+                          <div class="modal-dialog" role="document">
+                              <div class="modal-content"> 
+                              <div class="modal-body">
+                                  <p>Are you sure you want to widthdraw Interest </p>  
+                                  <hr>
+                                  <a href="{% url 'investor:investor_widthdraw_interest' item.id %}" class="btn btn-sm btn-info mr-3 pr-3 pl-3">Yes</a>
+                                  <button type="button" data-dismiss="modal" class="btn btn-info btn-sm pr-3 pl-3">No</button>
+                              </div>
+                              </div>
+                          </div>
+                      </div>  
+                      <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#investor_widthdraw_interest-{{item.id}}">Widthdraw Interest Balance</button>
+          
+
+
+
+                        </td>
+                      </tr>
+                      {% endfor %} 
+                      
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </div>
+</section> 
+{% endblock d-content %} 
+{% block d-script %}
+    <script> 
+    </script>
+
+{% endblock d-script %}

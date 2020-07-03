@@ -1,0 +1,91 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+{% load humanize %}
+{% block d-title %}
+    Popup List
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-12"> 
+          <h1 class="m-0 text-dark float-left w-75">PopUp List</h1> 
+          <a href="{% url 'investor:add_popup' %}" class="btn btn-success float-right text-right">Add New PopUp</a>
+        </div> 
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div> 
+<section class="invest_request_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% for message in messages %}
+                    <p class="float-left mb-1" style="color: red;">{{message}}</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-bordered table-striped text-center">
+                    <thead class="table-dark">
+                        <th>SL</th>
+                        <th>Title</th> 
+                        <th>Description</th> 
+                        <th>Status</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody class="text-center">
+                        
+                        {% for popup in popup_list %}
+                            <tr>
+                                <td class="align-middle">{{forloop.counter}}</td>
+                                <td class="align-middle">{{popup.title|truncatechars:30}}</td>
+                                <td class="align-middle">{{popup.desc|truncatechars:40}}</td>
+                                <td class="align-middle"> 
+                                    {% if popup.status %}
+                                        <span>Active</span>
+                                    {% else %}
+                                        <span style="color: red;">Inactive</span>
+                                    {% endif %} 
+                                </td>
+                                <td style="width:20%" class="align-middle text-center">
+
+
+                                    <div class="modal fade" id="popup-{{popup.id}}" tabindex="-1" role="dialog">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content"> 
+                                            <div class="modal-body">
+                                                <p>Are you sure you want to delete this Popup </p>  
+                                                <hr>
+                                                <a href="{% url 'investor:popup_delete' popup.id %}" class="btn btn-sm btn-info mr-3 pr-3 pl-3">Yes</a>
+                                                <button type="button" data-dismiss="modal" class="btn btn-info btn-sm pr-3 pl-3">No</button>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>  
+                                    <a href="{% url 'investor:popup_edit' popup.id %}" class="btn btn-success btn-sm d-inline-block mr-1">Edit</a>
+                                    <button class="btn btn-sm btn-danger mr-1" data-toggle="modal" data-target="#popup-{{popup.id}}">Delete</button>                                    
+                                    {% if not popup.status %}
+                                        <a href="{% url 'investor:popup_active' popup.id %}" class="btn btn-warning btn-sm d-inline-block mr-1">Active</a>
+                                        {% else %}
+                                        <a href="{% url 'investor:popup_deactive' popup.id %}" class="btn btn-success btn-sm d-inline-block mr-1">Deactive</a>
+                                    {% endif %} 
+                                    
+                                </td> 
+                                 
+                            </tr>
+                        {% endfor %} 
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section> 
+{% endblock d-content %} 
+{% block d-script %}
+    <script> 
+    </script>
+
+{% endblock d-script %}

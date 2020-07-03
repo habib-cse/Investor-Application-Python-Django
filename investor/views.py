@@ -12,10 +12,44 @@ from django.core.mail import send_mail
 from .pdfgenerator import renderPDF
 import datetime 
 from django.contrib.auth.models import User
+from .forms import PopupForm,TermsconditionForm
+from .decorators import investor_login_required,investor_or_admin_login_required
 
-# Create your views here.  
 from django.contrib.auth.decorators import login_required 
+# Create your views here.  
 # Admin functionality
+def sendemail(request):
+    inverst = Invest.objects.filter(status=True, payment_status=False,reinvest_status=False,email_send_status=False)
+    for item in inverst:
+        widthdraw_date = item.withdraw_date.day
+        if widthdraw_date < 7:  
+            item.email_send_status = True
+            item.save()
+            nfc_and_email_msg = """  
+            <p>Hello PFA,<br>
+            You have an upcoming payment. Find Bellow the full details<p>
+            Full Name:  {} {} <br> 
+            Amount Invested: {} <br>
+            Date of investment:  {}<br>
+            Expected Interest:  {}<br>
+            Payment Date: {} <br>
+            Account Number:  {}<br>
+            Bank Name: {} <br> 
+            """.format(item.investor.first_name,item.investor.last_name,item.amount_to_invest,item.date_of_invest, item.expected_interest,item.withdraw_date, item.investor.account_number, item.investor.bank_name ) 
+
+            email_subject = "Upcoming payment for #{}".format(item.expected_interest)  
+            form_email = 'pfa.erudite@gmail.com' 
+
+            send_mail(
+                email_subject,
+                nfc_and_email_msg,
+                form_email,
+                ['habib41juwel@gmail.com'],
+                fail_silently=False, 
+                html_message=nfc_and_email_msg, 
+            ) 
+
+
 def admin_login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -79,11 +113,11 @@ def investor_registration(request):
             Investor Accepted Terms 
         """.format(fname,lname,email,phone,address, amount_invest,invest_date,earning_amount,withdraw_date,bank_account,bank_name) 
 
-        nfc_title = "New PFA INVESTOR {} {}, wants to invest <strong>₦ {}</strong> on {}".format(fname,lname, amount_invest ,invest_date)
+        nfc_title = "New PFA INVESTOR {} {}, wants to invest <strong>₦{}</strong> on {}".format(fname,lname, amount_invest ,invest_date)
         # Notification for Admin
         Notification.objects.create(investor_id=investor.id, title=nfc_title, desc=nfc_and_email_msg,for_admin=True) 
         # Email For Admin 
-        email_subject = "New deposit request of ₦ {}".format(amount_invest)  
+        email_subject = "New deposit request of ₦{}".format(amount_invest)  
         form_email = 'pfa.erudite@gmail.com'
         to_email = 'wealcode@gmail.com' 
 
@@ -151,12 +185,11 @@ def request_to_invest(request, id):
         amount_invest = request.POST['amount_invest']
         earning_amount = request.POST['earning_amount']
         invest_date = request.POST['invest_date']
-        withdraw_date= request.POST['withdraw_date']
-
+        withdraw_date= request.POST['withdraw_date'] 
         invest = Invest.objects.create(investor_id=id, amount_to_invest=amount_invest, expected_interest=earning_amount, date_of_invest=invest_date,withdraw_date= withdraw_date)
         
         investor_id = investor.id
-        nfc_title = "New PFA INVESTOR {} {}, wants to invest <strong>₦ {}</strong> on {}".format(investor.first_name, investor.last_name, amount_invest ,invest_date)
+        nfc_title = "New PFA INVESTOR {} {}, wants to invest <strong>₦{:}</strong> on {}".format(investor.first_name, investor.last_name, amount_invest ,invest_date)
         nfc_and_email_msg = """  
             <p style="font-size:18px;margin-bottom:10px;"><strong>Hello PFA,</strong> <br>
             Find below details of New PFA INVESTOR:<p>
@@ -174,7 +207,7 @@ def request_to_invest(request, id):
         """.format(investor.first_name, investor.last_name,investor.email,investor.phone, investor.address, amount_invest,invest_date,earning_amount,withdraw_date,investor.account_number,investor.bank_name) 
 
         Notification.objects.create(investor_id=investor_id, title=nfc_title, desc=nfc_and_email_msg, for_admin=True) 
-        email_subject = "New deposit request of ₦ {}".format(amount_invest)  
+        email_subject = "New deposit request of ₦{}".format(amount_invest)  
         form_email = 'pfa.erudite@gmail.com'
         to_email = 'wealcode@gmail.com' 
 
@@ -198,10 +231,13 @@ def request_to_invest(request, id):
 
     return render(request, 'dashboard/request_to_invest.html')
 
+
+@investor_or_admin_login_required
 def dashboard(request):
+    sendemail(request)
     return render(request,'dashboard/dashboard.html')
 
-@login_required
+
 def all_active_invest(request, id):
     active_invest = Invest.objects.filter(investor_id=id, status=True)
     context = {
@@ -210,6 +246,7 @@ def all_active_invest(request, id):
     return render(request, 'dashboard/all_active_invest.html',context)
 
 
+@login_required(login_url='/investor/admin/login') 
 def approve_investment(request,id):
     invest = Invest.objects.get(id=id) 
     invest.status = True
@@ -219,11 +256,11 @@ def approve_investment(request,id):
     complete_invest_date = "{}/{}/{}".format(invest.date_of_invest.month,invest.date_of_invest.day, invest.date_of_invest.year )
     complete_widthdraw_date = "{}/{}/{}".format(invest.withdraw_date.month,invest.withdraw_date.day, invest.withdraw_date.year )
     
-    nfc_title = "Congratulations!! Your deposit request for <strong>₦ {}</strong> is approved by Admin".format(invest.amount_to_invest)
+    nfc_title = "Congratulations!! Your deposit request for <strong>₦{}</strong> is approved by Admin".format(invest.amount_to_invest)
     
     new_msg = """
         <h4 class='m-0'>Congratulations!! {} {} </h4>
-        <p> On <strong>{}</strong>, you made a deposit of <strong>₦ {}</strong>. You are entitled to 15% <strong>₦ {}</strong> of your investment and your withdrawal date is on <strong>{}</strong>.
+        <p> On <strong>{}</strong>, you made a deposit of <strong>₦{}</strong>. You are entitled to 15% <strong>₦{}</strong> of your investment and your withdrawal date is on <strong>{}</strong>.
         <br>Thank your for your Investment </p>
         <p>
             ERUDiTE <br>
@@ -232,7 +269,7 @@ def approve_investment(request,id):
         <p>""".format(invest.investor.first_name,invest.investor.last_name, complete_invest_date,invest.amount_to_invest,invest.expected_interest,complete_widthdraw_date)
     Notification.objects.create(investor_id=investor_id, title=nfc_title, desc=new_msg)
 
-    email_subject = "Deposit request for ₦ {} is approved by Admin".format(invest.amount_to_invest)  
+    email_subject = "Deposit request for ₦{} is approved by Admin".format(invest.amount_to_invest)  
     form_email = 'pfa.erudite@gmail.com'
     to_email = invest.investor.email 
 
@@ -245,7 +282,7 @@ def approve_investment(request,id):
         html_message=new_msg,
 
     )
-    message = "Deposit request for ₦ {} is approved".format(invest.amount_to_invest)
+    message = "Deposit request for ₦{} is approved".format(invest.amount_to_invest)
     messages.success(request,message)
     
     return redirect('investor:dashboard')
@@ -253,7 +290,7 @@ def approve_investment(request,id):
 
 
 
-
+@login_required(login_url='/investor/admin/login')
 def cancle_investment(request,id):
     invest = Invest.objects.get(id=id) 
     investor_id = invest.investor.id
@@ -261,10 +298,10 @@ def cancle_investment(request,id):
     complete_invest_date = "{}/{}/{}".format(invest.date_of_invest.month,invest.date_of_invest.day, invest.date_of_invest.year )
     complete_widthdraw_date = "{}/{}/{}".format(invest.withdraw_date.month,invest.withdraw_date.day, invest.withdraw_date.year )
     
-    nfc_title = "Deposit request for <strong>₦ {}</strong> was declined by Admin".format(invest.amount_to_invest)
+    nfc_title = "Deposit request for ₦{} was declined by Admin".format(invest.amount_to_invest)
     
     new_msg = """ 
-        <p>We extremely sorry to say that your deposit request for <strong>₦ {}</strong> was declined by Admin</p>
+        <p>We extremely sorry to say that your deposit request for <strong>₦{}</strong> was declined by Admin</p>
         <p>
             ERUDiTE <br>
             CEO<br>
@@ -272,7 +309,7 @@ def cancle_investment(request,id):
         <p>""".format(invest.amount_to_invest)
     Notification.objects.create(investor_id=investor_id, title=nfc_title, desc=new_msg)
 
-    email_subject = "Deposit request declined for ₦ {} by Admin".format(invest.amount_to_invest)  
+    email_subject = "Deposit request declined for ₦{} by Admin".format(invest.amount_to_invest)  
     form_email = 'pfa.erudite@gmail.com'
     to_email = invest.investor.email 
 
@@ -287,16 +324,12 @@ def cancle_investment(request,id):
     ) 
 
     invest.delete()
-    message = "Deposit request for ₦ {} was Declined".format(invest.amount_to_invest)
+    message = "Deposit request for ₦{} was Declined".format(invest.amount_to_invest)
     messages.success(request,message)
     
-    return redirect('investor:dashboard')
+    return redirect('investor:dashboard') 
 
-
-
-
-
-
+# body
 def single_nofication(request, id):
     notification = get_object_or_404(Notification, id=id)
     notification.is_view = True
@@ -306,7 +339,7 @@ def single_nofication(request, id):
     }
     return render(request, 'dashboard/nofication_details.html', context)
 
-
+@login_required(login_url='/investor/admin/login') 
 def admin_notification_list(request):
     notifications = Notification.objects.filter(for_admin=True).order_by('-date')
     page = request.GET.get('page', 1)
@@ -325,7 +358,7 @@ def admin_notification_list(request):
 
 
 
-
+@investor_login_required
 def investor_notification_list(request,id):
     notifications = Notification.objects.filter(investor_id=id,for_admin=False).order_by('-date')
     page = request.GET.get('page', 1)
@@ -342,7 +375,8 @@ def investor_notification_list(request,id):
         "investor_notifications":notifications
     }
     return render(request, 'dashboard/investor_notification_list.html',context)
-
+    
+@investor_login_required
 def investor_unread_notification_list(request,id):
     notifications = Notification.objects.filter(investor_id=id,for_admin=False, is_view=False).order_by('-date')
     page = request.GET.get('page', 1)
@@ -359,6 +393,7 @@ def investor_unread_notification_list(request,id):
     }
     return render(request, 'dashboard/investor_notification_list.html',context)
 
+@login_required(login_url='/investor/admin/login')
 def admin_unread_notifications(request):
     notifications = Notification.objects.filter(for_admin=True, is_view=False).order_by('-date')
     page = request.GET.get('page', 1)
@@ -403,7 +438,7 @@ def terms_condition_pdf(request,id):
     bdonor_pdf = renderPDF('dashboard/terms_condition_pdf.html',context)
     return HttpResponse(bdonor_pdf, content_type='application/pdf') 
 
-
+@login_required(login_url='/investor/admin/login') 
 def all_investor_list(request):
     investor_list = Investor.objects.filter(status=True).order_by('first_name')
     
@@ -412,12 +447,14 @@ def all_investor_list(request):
     }
     return render(request, 'dashboard/all_investor_list.html',context)
 
+@login_required(login_url='/investor/admin/login')
 def investor_delete(request, id):
     investor = Investor.objects.get(id=id)
     investor.delete() 
     messages.success(request, "Investor Deleted Successfully")
     return redirect('investor:all_investor_list')
-    
+
+@login_required(login_url='/investor/admin/login') 
 def all_pending_request(request):
     pending_request = Invest.objects.filter(status=False, payment_status=False).order_by('-timestamp')
     context = {
@@ -425,15 +462,16 @@ def all_pending_request(request):
     }
     return render(request, 'dashboard/all_pending_request.html',context)
     
-
+@login_required(login_url='/investor/admin/login') 
 def all_active_invest_list(request):
-    active_invest = Invest.objects.filter(status=True, payment_status=False).order_by('withdraw_date')
+    active_invest = Invest.objects.filter(status=True, payment_status=False,reinvest_status=False).order_by('withdraw_date')
     context = {
         'active_invest_list':active_invest
     }
     return render(request, 'dashboard/all_active_invest_list.html',context)
 
 
+@login_required(login_url='/investor/admin/login') 
 def admin_chat(request, id): 
     messages = Message.objects.filter(status=True,investor_id = id).order_by('date_time')
     if id != 0:
@@ -466,10 +504,11 @@ def investor_chat(request, id):
     }
     return render(request, 'dashboard/investor_chat.html', context)
 
+@login_required(login_url='/investor/admin/login') 
 def make_payment(request,id):
-    invest = Invest.objects.get(id=id)
+    invest = Invest.objects.get(id=id) 
     investor_id = invest.investor.id
-    nfc_title = "Admin made a payment of ₦ {} ".format(invest.amount_to_invest)
+    nfc_title = "Admin made a payment of ₦{} ".format(invest.amount_to_invest)
     complete_invest_date = "{}/{}/{}".format(invest.date_of_invest.month,invest.date_of_invest.day, invest.date_of_invest.year )
     complete_widthdraw_date = "{}/{}/{}".format(invest.withdraw_date.month,invest.withdraw_date.day, invest.withdraw_date.year )
     
@@ -485,7 +524,7 @@ def make_payment(request,id):
     """.format(invest.investor.first_name, invest.investor.last_name,invest.amount_to_invest,complete_invest_date,invest.expected_interest,complete_widthdraw_date,invest.investor.account_number,invest.investor.bank_name) 
 
     Notification.objects.create(investor_id=investor_id, title=nfc_title, desc=nfc_and_email_msg, for_admin=False) 
-    email_subject = "Admin made a payment of <strong>₦ {}</strong> ".format(invest.amount_to_invest)
+    email_subject = "Admin made a payment of ₦{} ".format(invest.amount_to_invest)
     form_email = 'pfa.erudite@gmail.com'
     to_email = invest.investor.email
 
@@ -497,13 +536,13 @@ def make_payment(request,id):
         fail_silently=False, 
         html_message=nfc_and_email_msg,
 
-    ) 
-
-    invest.payment_status=True
-    invest.save(0)
+    )  
+    invest.reinvest_status = True
+    invest.save()
     messages.success(request, "You have make a payment ")
     return redirect('investor:all_active_invest_list')
 
+@login_required(login_url='/investor/admin/login') 
 def interest_paid_admin(request):
     interest_paid = Invest.objects.filter(payment_status=True).order_by('-withdraw_date')
     context = {
@@ -511,11 +550,14 @@ def interest_paid_admin(request):
     }
     return render(request, 'dashboard/interest_paid_admin.html', context)
 
+ 
 def interest_paid_admin_delete(request,id):
     interest_paid = Invest.objects.get(payment_status=True,id=id) 
     interest_paid.delete()
     return redirect('investor:interest_paid_admin')
 
+
+@login_required(login_url='/investor/admin/login')
 def admin_password_change(request):
     user_id = request.user.id 
     user = User.objects.get(id=user_id)
@@ -529,7 +571,7 @@ def admin_password_change(request):
             if password == cpassword:
                 user.set_password(password)
                 user.save()
-                messages.success(request,"Password Updated Successfully")
+                messages.success(request,"Password Updated Successfully") 
             else: 
                 messages.error(request,"Password doesn't Matched")
         else:
@@ -537,6 +579,8 @@ def admin_password_change(request):
 
     return render(request, 'dashboard/admin_password_change.html')
 
+
+@login_required(login_url='/investor/admin/login')
 def add_new_investor(request):
     bank_list = Bank.objects.filter(status=True)
     if request.method == 'POST':
@@ -593,6 +637,7 @@ def add_new_investor(request):
     
     return render(request, 'dashboard/add_new_investor.html',context)
 
+
 def investor_active_link(request, id):
     investor = Investor.objects.get(id=id)
     if request.method == 'POST':
@@ -611,6 +656,8 @@ def investor_active_link(request, id):
 
     return render(request, 'account/investor_active_link.html')
 
+
+@login_required(login_url='/investor/admin/login')
 def add_bank(request):
     if request.method == 'POST':
         bank = request.POST['bank'] 
@@ -618,13 +665,16 @@ def add_bank(request):
         messages.success(request, "Bank Added Successfully")
     return render(request,'dashboard/add_bank.html')
 
+
+@login_required(login_url='/investor/admin/login')
 def bank_list(request):
     bank_list = Bank.objects.all().order_by('bank_name')
     context = {
         'bank_list':bank_list
     }
     return render(request, 'dashboard/bank_list.html',context)
- 
+
+@login_required(login_url='/investor/admin/login')
 def bank_edit(request, id):
     bank = Bank.objects.filter(id = id) 
     old_name = bank[0].bank_name
@@ -638,6 +688,7 @@ def bank_edit(request, id):
     }
     return render(request,'dashboard/edit_bank.html',context)
 
+@login_required(login_url='/investor/admin/login')
 def bank_active(request, id):
     bank = Bank.objects.get(id = id)
     bank.status = True
@@ -646,10 +697,281 @@ def bank_active(request, id):
     return redirect("investor:bank_list") 
 
 
+@login_required(login_url='/investor/admin/login')
 def bank_deactive(request, id):
     bank = Bank.objects.get(id = id)
     bank.status = False
     bank.save() 
     messages.success(request, "Bank status changed uccessfully")
     return redirect("investor:bank_list") 
+
+@investor_login_required
+def investor_password_change(request, id):
+    investor = Investor.objects.get(id = id)
+    if request.method == 'POST':
+        old_pass = request.POST['old_pass']
+        password1 = request.POST['pass']
+        cpassword = request.POST['cpass']  
+
+        encripted_pass = hashlib.md5(old_pass.encode())
+        password = encripted_pass.hexdigest()
+
+        encripted_pass1 = hashlib.md5(password1.encode())
+        new_pass = encripted_pass1.hexdigest()
+
+        if investor.password == password:
+            if password1 == cpassword:
+                investor.password = new_pass
+                investor.save()
+                messages.success(request,"Password Updated Successfully")  
+            else: 
+                messages.error(request,"Password doesn't Matched")
+        else:
+            messages.error(request,"Old Password doesn't Matched")
+
+    return render(request, 'dashboard/admin_password_change.html')
+
+@investor_login_required
+def investor_profile_update(request, id):
+    investor = Investor.objects.get(id = id)
+    bank_list = Bank.objects.filter(status=True)
+    if request.method == 'POST':
+        username = request.POST['username']
+        fname = request.POST['fname']
+        lname = request.POST['lname'] 
+        email = request.POST['email']
+        phone = request.POST['phone']
+        address = request.POST['address']
+        bank_name_id = int(request.POST['bank'])
+        bank_account = request.POST['bank_account'] 
+
+        update_investor = Investor.objects.filter(id=id)
+        update_investor.update(username = username,first_name = fname, last_name =lname, email = email, phone=phone, address = address,bank_name_id = bank_name_id, account_number = bank_account)
+
+        messages.success(request, "Investor Profile Updated Successfully")
+    context = {
+        'investor':investor,
+        'bank_list':bank_list, 
+    }
+    return render(request, 'dashboard/investor_profile_update.html',context)
+
+@investor_login_required
+def interest_received_investor(request, id):
+    invests = Invest.objects.filter(investor_id = id,payment_status=True)
+    context = {
+        'invests':invests
+    }
+    return render(request, 'dashboard/nterest_received_investor.html',context)
+
+@investor_login_required
+def investor_active_invest(request, id):
+    invests = Invest.objects.filter(investor_id = id, status=True, payment_status=False,reinvest_status=False, delete_status=False).order_by('date_of_invest')
+    context = {
+        'invests':invests
+    }
+    return render(request, 'dashboard/investor_active_invest.html',context)
+@investor_login_required
+def investor_pending_invest(request, id):
+    pending_invest_list = Invest.objects.filter(investor_id=id, status=False, payment_status=False).order_by('-date_of_invest')
+    context = {
+        'pending_invest_list':pending_invest_list
+    }
+    return render(request, 'dashboard/investor_pending_invest.html', context)
+
+@investor_login_required
+def investor_cancle_investment(request, id):
+    invest = Invest.objects.get(id = id)
+    invest.delete()
+    messages.success(request, "Invest removed successfully")
+    return redirect('investor:investor_pending_invest', request.session['investor'])
+
+@login_required(login_url='/investor/admin/login')
+def add_popup(request):
+    form = PopupForm()
+    if request.method == 'POST':
+        form = PopupForm(request.POST)
+        if form.is_valid():
+            popup = form.save(commit=False)
+            popup.timestamp = datetime.datetime.now()
+            popup.status = False
+            popup.save()
+            messages.success(request, 'Popup Created Successfully')
+            return redirect('investor:popup_list')
+    context = {
+        'form':form
+    }
+    return render(request, 'dashboard/add_popup.html', context)
+
+@login_required(login_url='/investor/admin/login')
+def popup_list(request):
+    popup_list = Popup.objects.all().order_by('-timestamp')
+    context = {
+        'popup_list':popup_list
+    }
+    return render(request, 'dashboard/popup_list.html', context) 
+
+@login_required(login_url='/investor/admin/login')    
+def popup_edit(request, id):
+    popup = Popup.objects.get(id=id)
+    form = PopupForm(instance=popup)
+    if request.method == 'POST':
+        form = PopupForm(request.POST, instance=popup)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Popup Updated Successfully')
+            return redirect('investor:popup_list')
+    context = {
+        'form':form,
+        'update':True
+    }
+    return render(request, 'dashboard/add_popup.html', context)
+
+@login_required(login_url='/investor/admin/login')
+def popup_delete(request, id):
+    popup = Popup.objects.get(id=id)
+    popup.delete()
+    messages.success(request, 'Popup Deleted Successfully')
+    return redirect('investor:popup_list') 
+
+@login_required(login_url='/investor/admin/login')
+def popup_active(request, id):
+    popup = Popup.objects.get(id=id)
+    popup.status = True
+    popup.save()
+    messages.success(request, 'Popup Activated')
+    return redirect('investor:popup_list')
+
+@login_required(login_url='/investor/admin/login')
+def popup_deactive(request, id):
+    popup = Popup.objects.get(id=id)
+    popup.status = False
+    popup.save()
+    messages.success(request, 'Popup Deactivated')
+    return redirect('investor:popup_list') 
+
+@login_required(login_url='/investor/admin/login')
+def send_bulk_email(request): 
+    investor_list = Investor.objects.filter(status=True).order_by('first_name') 
+    if request.method == 'POST': 
+        email_list = request.POST.getlist('email[]') 
+        form_email = 'test@gmail.com'
+        email_subject = request.POST['subject']
+        email_msg = request.POST['message']
+        send_mail(
+            email_subject, 
+            email_msg,
+            form_email,
+            email_list,
+            fail_silently=False, 
+        )  
+        messages.success(request, "Email Send Successfully") 
+        
+    context = {
+        "investor_list":investor_list
+    }
+    return render(request, 'dashboard/send_bulk_email.html',context)
+
+@investor_login_required
+def investor_pending_payment(request, id):
+    pending_payment = Invest.objects.filter(investor_id = id, reinvest_status=True)
+
+    context = {
+        'pending_payment':pending_payment
+    }
+    return render(request, 'dashboard/investor_pending_payment.html',context)
+
+
+@investor_login_required
+def invest_all_balance(request, id):
+    old_invest = Invest.objects.get(id = id, reinvest_status=True)
+    old_invest.reinvest_status = False
+    old_invest.payment_status = True
+    old_invest.delete_status=True
+    old_invest.status=False
+    old_invest.save()
+
+    investor_id =old_invest.investor.id
+    amount_to_invest = old_invest.expected_interest + old_invest.amount_to_invest
+    expected_interest = (amount_to_invest * 15)/100
+    date_of_invest = datetime.datetime.now()
+    withdraw_date = date_of_invest + datetime.timedelta(days=30)
+    
+    Invest.objects.create(investor_id=investor_id,amount_to_invest=amount_to_invest,expected_interest=expected_interest,date_of_invest=date_of_invest, withdraw_date=withdraw_date)
+
+    return redirect('investor:investor_pending_payment', request.session['investor'])
+
+@investor_login_required
+def investor_widthdraw_all(request, id):
+    invest = Invest.objects.get(id = id, reinvest_status=True) 
+    invest.reinvest_status=False
+    invest.payment_status=True
+    invest.widthdrawn_status=True
+    invest.delete_status=True
+    invest.save() 
+    messages.success(request,"You have successfully Widthdraw all of your Amount") 
+    return redirect('investor:investor_pending_payment', request.session['investor'])
+
+@investor_login_required
+def investor_widthdraw_interest(request, id):
+    old_invest = Invest.objects.get(id = id, reinvest_status=True)
+    old_invest.reinvest_status = False
+    old_invest.payment_status = True
+    old_invest.delete_status=True
+    old_invest.status=False
+    old_invest.save()
+
+    investor_id =old_invest.investor.id
+    amount_to_invest = old_invest.amount_to_invest
+    expected_interest = (amount_to_invest * 15)/100
+    date_of_invest = datetime.datetime.now()
+    withdraw_date = date_of_invest + datetime.timedelta(days=30)
+    
+    Invest.objects.create(investor_id=investor_id,amount_to_invest=amount_to_invest,expected_interest=expected_interest,date_of_invest=date_of_invest, withdraw_date=withdraw_date)
+
+    return redirect('investor:investor_pending_payment', request.session['investor'])
+
+
+def terms_condition(request):
+    terms_conditons = Termscondition.objects.filter(status=True).first()
+    context = {
+        'terms_conditons':terms_conditons
+    }
+    return render(request, 'dashboard/terms_condition.html',context)
+
+@login_required(login_url='/investor/admin/login')
+def dashboard_terms_condition(request):
+    terms_conditons = Termscondition.objects.filter(status=True).first()
+    context = {
+        'terms_conditons':terms_conditons
+    }
+    return render(request, 'dashboard/dashboard_terms_condition.html',context)
+
+@login_required(login_url='/investor/admin/login')
+def add_terms_condition(request):
+    form = TermsconditionForm()
+    if request.method == 'POST':
+        form = TermsconditionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('investor:dashboard_terms_condition') 
+    context = {
+        'form':form
+    }
+    return render(request, 'dashboard/add_terms_condition.html',context)
+
+@login_required(login_url='/investor/admin/login')
+def update_terms_condition(request,id):
+    terms = Termscondition.objects.get(id = id)
+    form = TermsconditionForm(instance=terms)
+    if request.method == 'POST':
+        form = TermsconditionForm(request.POST, instance=terms)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Terms and Condition updated")
+            return redirect('investor:dashboard_terms_condition') 
+    context = {
+        'form':form,
+        'update':True
+    }
+    return render(request, 'dashboard/update_terms_condition.html',context)
 
