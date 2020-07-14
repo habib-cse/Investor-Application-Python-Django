@@ -21,7 +21,7 @@
         <div class="row">
             <div class="col">
                 {% for message in messages %}
-                    <p class="float-left mb-1" style="color: red;">{{message}}</p>
+                    <p class="float-left mb-2 text-center" style="color: green;"><i class="fas fa-check-circle"></i> {{message}}</p>
                 {% endfor %}
             </div>
         </div>
@@ -37,7 +37,9 @@
                       <th>Amount</th>
                       <th>Date</th>
                       <th>Interest</th>
+                      {% if request.user.is_authenticated or request.session.editor|user_has_access:"Can Approve Invest"%}                      
                       <th>Action</th>
+                      {% endif %} 
                     </thead>
                     <tbody class="text-center">
                       
@@ -48,19 +50,20 @@
                         <td class=" align-middle">₦{{item.amount_to_invest|coma_separator_value}}</td>
                         <td class=" align-middle">{{item.date_of_invest |date}}</td>
                         <td class=" align-middle">₦{{item.expected_interest | coma_separator_value}}</td>
+                        {% if request.user.is_authenticated or request.session.editor|user_has_access:"Can Approve Invest"%}                      
                         <td class=" align-middle">
                           <div class="modal fade" id="approve-{{item.id}}" tabindex="-1" role="dialog">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content"> 
                                 <div class="modal-body">
-                                  <p>Are you sure you want to Approve of ₦{{item.amount_to_invest|coma_separator_value}} </p>  
+                                  <p>Are you sure you want to approve ₦{{item.amount_to_invest|coma_separator_value}} from {{item.investor.first_name}} {{item.investor.last_name}} </p>  
                                   <hr>
                                     <a href="{% url 'investor:approve_investment' item.id %}" class="btn btn-sm btn-info mr-3 pr-3 pl-3">Yes</a>
                                     <button type="button" data-dismiss="modal" class="btn btn-info btn-sm pr-3 pl-3">No</button>
                                 </div>
                                 </div>
                             </div>
-                        </div>  
+                          </div>  
                           <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#approve-{{item.id}}">Approve</button>
                           <div class="modal fade" id="cancale-{{item.id}}" tabindex="-1" role="dialog">
                             <div class="modal-dialog" role="document">
@@ -77,6 +80,7 @@
                           <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#cancale-{{item.id}}">Cancel</button>
         
                         </td>
+                        {% endif %} 
                       </tr>
                       {% endfor %} 
                       

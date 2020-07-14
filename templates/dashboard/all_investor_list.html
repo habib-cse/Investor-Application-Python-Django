@@ -34,9 +34,9 @@
                         <th>Full Name</th> 
                         <th>Email Address</th>
                         <th>Phone</th>
-                        <th style="width: 18%;">Address</th>
-                        <th>Bank Name</th>
-                        <th style="width: 11%;">Bank Account</th> 
+                        <th style="width: 15%;">Address</th>
+                        <th style="width: 15%;">Bank Name</th>
+                        <th>Bank Account</th> 
                         <th>Amount</th> 
                         <th style="width:12%">Action</th>
                     </thead>
@@ -45,14 +45,14 @@
                         {% for investor in investor_list %}
                             <tr>
                                 <td class="align-middle">{{forloop.counter}}</td>
-                                <td class="align-middle">{{investor.first_name}} {{investor.last_name}}</td>
-                                <td class="align-middle">{{investor.email}}</td>
-                                <td class="align-middle">{{investor.phone}}</td>
-                                <td class="align-middle">{{investor.address}}</td>
-                                <td class="align-middle">{{investor.bank_name}}</td>
-                                <td class="align-middle">{{investor.account_number}}</td>  
-                                <td class="align-middle">₦{{investor.id|investor_invest_amount}}</td>
-                                <td class="align-middle">  
+                                <td class="align-middle pr-2 pl-2">{{investor.first_name}} {{investor.last_name}}</td>
+                                <td class="align-middle pr-2 pl-2">{{investor.email}}</td>
+                                <td class="align-middle pr-2 pl-2">{{investor.phone}}</td>
+                                <td class="align-middle pr-2 pl-2">{{investor.address}}</td>
+                                <td class="align-middle pr-2 pl-2">{{investor.bank_name}}</td>
+                                <td class="align-middle pr-2 pl-2">{{investor.account_number}}</td>  
+                                <td class="align-middle pr-2 pl-2">₦{{investor.id|investor_invest_amount}}</td>
+                                <td class="align-middle pr-2 pl-2">  
                                     <div class="modal fade" id="investor-{{investor.id}}" tabindex="-1" role="dialog">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content"> 
@@ -65,10 +65,10 @@
                                             </div>
                                         </div>
                                     </div>  
-                                    <button class="btn btn-sm btn-info mr-1" data-toggle="modal" data-target="#investor-{{investor.id}}">
+                                    <button class="btn btn-sm btn-info mr-1 mb-1" data-toggle="modal" data-target="#investor-{{investor.id}}">
                                         <i class="far fa-trash-alt"></i>
                                       </button> 
-                                    <a href="{% url 'investor:admin_chat' investor.id  %}" class="btn btn-sm btn-info">Message</a>
+                                    <a href="{% url 'investor:admin_chat' investor.id  %}" class="btn btn-sm btn-info mb-1">Message</a>
                                 </td>
                             </tr>
                         {% endfor %} 

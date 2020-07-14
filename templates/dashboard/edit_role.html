@@ -1,0 +1,69 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+{% load humanize %}
+{% block d-title %}
+    Update Role
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+
+<form action="" method="POST"> {% csrf_token %}
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-12"> 
+                    <h1 class="m-0 mb-2 text-dark float-left w-75">Update Role</h1>  
+                </div> 
+            </div><!-- /.row -->
+            <div class="row">
+                <div class="col">
+                    {% for message in messages %}
+                        <p class="float-left mb-1" style="color: red;">{{message}}</p>
+                    {% endfor %}
+                </div>
+            </div> 
+            <div class="row"> 
+                <div class="col-md-9 col-sm-12">
+                    <p style="font-size:18px;">Role Name</p>
+                    <input style="width:70%;margin-right:5%" value="{{role.role_name}}" type="text" name="role_name" placeholder="Role Name" class="form-control mt-1 mb-3 float-left">
+                    <input type="submit" value="Update" class="btn btn-success float-left w-25 mt-1 mb-3">
+                    <table class="table table-bordered table-striped text-center">
+                        <thead class="table-dark">
+                            <th class="text-center">Check all<input onclick="selectAll()" id="main_check" type="checkbox" class=" form-check d-block m-auto"></th>
+                            <th>Access level for the Role</th> 
+                        </thead>
+                        <tbody> 
+                            {% for access in access_list %} 
+                                <tr>
+                                    <td class="align-middle"><input type="checkbox" id="check" name="access[]" value="{{access.id}}" class="form-check m-auto" {% if access.id|check_access:role %} checked {% endif %}></td>
+                                    <td class="align-middle">{{access.has_access}}</td>
+                                </tr>
+                            {% endfor %} 
+                        </tbody>
+                    </table> 
+                </div>
+            </div>
+        </div>
+    </div>  
+</form>
+{% endblock d-content %} 
+{% block d-script %}
+    <script> 
+        function selectAll(){
+            main_check = document.getElementById("main_check").checked;  
+            if(main_check){
+                checkboxes = document.getElementsByName('access[]');
+                for(var i in checkboxes)
+			        checkboxes[i].checked = true
+            }
+            else{
+                checkboxes = document.getElementsByName('access[]');
+                for(var i in checkboxes)
+			        checkboxes[i].checked = false
+            }
+        }
+
+    </script>
+
+{% endblock d-script %}

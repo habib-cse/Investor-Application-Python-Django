@@ -35,8 +35,10 @@ Active Invest List
                       <th>Date of Invest</th> 
                       <th>Withdrawal Date</th>
                       <th>Days Left</th>
-                      <th>Interest</th>
+                      <th>Interest</th>                        
+                      {% if request.user.is_authenticated or request.session.editor|user_has_access:"Can Pay"%}
                       <th>Action</th>
+                      {% endif %} 
                     </thead>
                     <tbody class="text-center">
                       
@@ -49,6 +51,7 @@ Active Invest List
                         <td class=" align-middle">{{item.withdraw_date |date}}</td>
                         <td class=" align-middle">{{item.id|days_remaining}} days left</td>
                         <td class=" align-middle">₦{{item.expected_interest | coma_separator_value}}</td>
+                        {% if request.user.is_authenticated or request.session.editor|user_has_access:"Can Pay"%}
                         <td class=" align-middle"> 
                           <div class="modal fade" id="pay-{{item.id}}" tabindex="-1" role="dialog">
                             <div class="modal-dialog" role="document">
@@ -64,6 +67,8 @@ Active Invest List
                         </div>  
                           <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#pay-{{item.id}}">Pay</button> 
                         </td>
+
+                      {% endif %} 
                       </tr>
                       {% endfor %} 
                       

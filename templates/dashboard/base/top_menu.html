@@ -18,6 +18,10 @@
         <li class="nav-item d-none d-sm-inline-block">
           <a href="{% url 'investor:investor_logout' %}" class="nav-link">Log out</a>
         </li>
+      {% elif request.session.editor %}
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="{% url 'investor:user_logout' %}" class="nav-link">Log out</a>
+        </li>
       {% endif %}  
       
       {% if request.session.investor %}
@@ -32,15 +36,17 @@
     <ul class="navbar-nav ml-auto">
       <!-- Messages Dropdown Menu -->
 
-      {% if request.user.is_authenticated %}
-      <li class="nav-item dropdown">
-        <a class="nav-link" href="{% url 'investor:admin_chat' 0 %}">
-          <i class="far fa-comments"></i> 
-            {% if admin_message|show_unread_admin_message %}
-            <span class="badge badge-danger navbar-badge"> {{admin_message|show_unread_admin_message }}</span>
-            {% endif %}  
-        </a> 
-      </li>
+      {% if request.user.is_authenticated or request.session.editor %}
+        {% if request.user.is_authenticated or request.session.editor|user_has_access:"Inbox"%}
+        <li class="nav-item dropdown">
+          <a class="nav-link" href="{% url 'investor:admin_chat' 0 %}">
+            <i class="far fa-comments"></i> 
+              {% if admin_message|show_unread_admin_message %}
+              <span class="badge badge-danger navbar-badge"> {{admin_message|show_unread_admin_message }}</span>
+              {% endif %}  
+          </a> 
+        </li>
+        {% endif %}
       {% elif request.session.investor %}
         <li class="nav-item dropdown">
           <a class="nav-link" href="{% url 'investor:investor_chat' request.session.investor  %}">
@@ -54,8 +60,10 @@
  
       
       <!-- Notifications Dropdown Menu -->
-      {% if request.user.is_authenticated  %} 
-      
+      {% if request.user.is_authenticated or request.session.editor %} 
+
+      {% if request.user.is_authenticated or request.session.editor|user_has_access:"Notification"%}
+
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-bell"></i>  
@@ -80,7 +88,7 @@
           <a href="{% url 'investor:admin_notification_list' %}" class="dropdown-item dropdown-footer">All Notifications</a>
         </div>
       </li>
-
+      {% endif %}
 
       {% elif request.session.investor %}
       <li class="nav-item dropdown">

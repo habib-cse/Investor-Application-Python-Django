@@ -23,7 +23,7 @@ class Investor(models.Model):
     bank_name = models.ForeignKey(Bank, on_delete=models.CASCADE)
     account_number = models.BigIntegerField()
     agree_to_invest = models.BooleanField(default=True) 
-    status = models.BooleanField(default=True)
+    status = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Investor"
@@ -122,3 +122,37 @@ class Termscondition(models.Model):
     
     def __str__(self):
         return self.page_title
+
+class Access(models.Model):
+    has_access = models.CharField(max_length=300)
+    status = models.BooleanField(default=True)
+
+    def __str__(self): 
+        return self.has_access
+
+class Role(models.Model):
+    role_name = models.CharField(max_length=200)
+    access = models.ManyToManyField(Access)
+
+    def __str__(self): 
+        return self.role_name
+
+class Editor(models.Model):  
+    username = models.CharField(max_length=150)
+    full_name = models.CharField(max_length=50)
+    email = models.EmailField(max_length=254)
+    password = models.CharField(max_length=200)
+    status = models.BooleanField(default=False)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)
+ 
+    def __str__(self):
+        return self.username 
+
+
+class Interest(models.Model):  
+    amount = models.IntegerField()
+    status = models.BooleanField(default=True)
+ 
+
+    def __str__(self):
+        return "{}".format(self.amount)

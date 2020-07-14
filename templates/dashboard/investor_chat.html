@@ -105,7 +105,7 @@
   {% endblock d-content %} 
   {% block d-script %}
       <script>  
-        
+        document.getElementById("loaders").style.display="None";
         function autoScrolling() {
             myIframe = document.getElementById('message_body'); 
             myIframe.scrollTo(0,myIframe.scrollHeight); 

@@ -2,7 +2,7 @@
 {% load extra_tags %}
 {% load humanize %}
 {% block d-title %}
-    investor List
+    Send Email
 {% endblock d-title %} 
 
 {% block d-content %} 
@@ -17,13 +17,14 @@
                 </div> 
             </div><!-- /.row -->
             <div class="row">
-                <div class="col-md-6 col-sm-12">
+                <div class="col-md-7 col-sm-12">
                 <!-- <input type="text" name="sender_email" placeholder="Sender Email Address" class="for-control mb-3"> -->
                 <input type="text" name="subject" placeholder="Email Subject" class="form-control mb-3">
-                <input type="submit" class="btn btn-success" value="Send Mail">
                 </div>
-                <div class="col-md-6 col-sm-12">
+                <div class="col-md-7 col-sm-12">
                     <textarea name="message" placeholder="Email Message" class="form-control" id="" cols="30" rows="3"></textarea>
+
+                    <input type="submit" class="btn btn-success mb-2 mt-2" value="Send Mail">
                 </div>
             </div>
         </div><!-- /.container-fluid -->

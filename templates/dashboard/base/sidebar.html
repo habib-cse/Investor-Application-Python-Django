@@ -15,20 +15,24 @@
     <!-- Sidebar Menu -->
     <nav class="mt-2">
       
-      {% if request.user.is_authenticated %}
+      {% if request.user.is_authenticated or request.session.editor %}
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false"> 
-        <li class="nav-item has-treeview menu-open">
-          <a href="{% url 'investor:dashboard' %}" class="nav-link active">
+        <li {% if "dashboards/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
+
+          <a href="{% url 'investor:dashboard' %}" class="nav-link">
             <i class="nav-icon fas fa-tachometer-alt"></i> <p> Dashboard </p>
           </a> 
         </li> 
-        <li class="nav-item has-treeview">
+        
+        {% if request.user.is_authenticated %} 
+        <li {% if "/password/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
           <a href="#" class="nav-link">
-            <i class="fas fa-user"></i> <p>My Account<i class="right fas fa-angle-left"></i></p>
+            <i class="fas fa-user-cog"></i> <p>My Account<i class="right fas fa-angle-left"></i></p>
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{% url 'investor:admin_password_change' %}" class="nav-link">
+              {% url 'investor:admin_password_change' as url %}
+              <a href="{{url}}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}>
                 <i class="far fa-circle nav-icon"></i> <p>Change Password</p> </a>
             </li>
             <li class="nav-item">
@@ -38,122 +42,204 @@
             </li> 
           </ul>
         </li>  
-        <li class="nav-item has-treeview">
+        {% endif %}
+        {% if request.session.editor|user_has_access:"User Management" or request.user.is_authenticated %}
+        <li {% if "/users/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
+            <a href="#" class="nav-link">
+              <i class="fas fa-user"></i> <p>User Management <i class="right fas fa-angle-left"></i></p>
+            </a>
+            <ul class="nav nav-treeview"> 
+              <li class="nav-item">              
+                {% url 'investor:user_list' as url %}
+                <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
+                  <i class="far fa-circle nav-icon"></i> <p>User List</p> </a>
+              </li> 
+              <li class="nav-item">        
+                {% url 'investor:add_user' as url %}
+                <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
+                  <i class="far fa-circle nav-icon"></i> <p>Add New User</p> </a>
+              </li> 
+            </ul>
+          </li>   
+        {% endif %}
+        {% if request.session.editor|user_has_access:"Investor Management" or request.user.is_authenticated %} 
+        <li {% if "/investors/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
           <a href="#" class="nav-link">
-            <i class="fas fa-users"></i> <p>Investors <i class="fas fa-angle-left right"></i> </p>
+            <i class="fas fa-users"></i> <p>Investor Management <i class="fas fa-angle-left right"></i> </p>
           </a>
           <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="{% url 'investor:add_new_investor' %}" class="nav-link">
+            <li class="nav-item">     
+              {% url 'investor:add_new_investor' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
                 <i class="far fa-circle nav-icon"></i> <p>Add New Investor</p>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="{% url 'investor:all_investor_list' %}" class="nav-link">
+            <li class="nav-item">     
+              {% url 'investor:all_investor_list' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
                 <i class="far fa-circle nav-icon"></i> <p>Investor list</p>
               </a>
             </li> 
           </ul>
         </li>
-        <li class="nav-item has-treeview">
+        {% endif %}
+        {% if request.session.editor|user_has_access:"Invest Management" or request.user.is_authenticated %}         
+        <li {% if "/invests/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-chart-pie"></i>
-            <p> Invest <i class="right fas fa-angle-left"></i> </p>
+            <p> Invest Management <i class="right fas fa-angle-left"></i> </p>
           </a>
           <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="{% url 'investor:all_active_invest_list' %}" class="nav-link">
+            <li class="nav-item">     
+              {% url 'investor:all_active_invest_list' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
                 <i class="far fa-circle nav-icon"></i> <p>Active Invest List</p>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="{% url 'investor:all_pending_request' %}" class="nav-link">
+            <li class="nav-item">     
+              {% url 'investor:all_pending_request' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
                 <i class="far fa-circle nav-icon"></i> <p>Pending Invest List</p>
               </a>
             </li> 
           </ul>
         </li>
-        <li class="nav-item has-treeview">
+        {% endif %}
+        {% if request.session.editor|user_has_access:"Payment Management" or request.user.is_authenticated %} 
+        <li {% if "/payments/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
           <a href="#" class="nav-link">
             <i class="fas fa-money-check-alt"></i>
-            <p>Payment <i class="fas fa-angle-left right"></i></p>
+            <p>Payment Management <i class="fas fa-angle-left right"></i></p>
           </a>
           <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="{% url 'investor:all_active_invest_list' %}" class="nav-link">
+            <li class="nav-item">     
+              {% url 'investor:upcoming_payment' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
                   <i class="far fa-circle nav-icon"></i> <p>Upcoming Payment</p>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="{% url 'investor:interest_paid_admin' %}" class="nav-link">
+            <li class="nav-item">     
+              {% url 'investor:interest_paid_admin' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
                 <i class="far fa-circle nav-icon"></i> <p>Already Paid</p>
               </a>
             </li> 
           </ul>
         </li>
-        <li class="nav-item has-treeview">
+        {% endif %}       
+        {% if request.session.editor|user_has_access:"Bank Management" or request.user.is_authenticated %} 
+        <li {% if "/banks/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
           <a href="#" class="nav-link">
             <i class="fas fa-briefcase"></i>
-            <p>Bank <i class="fas fa-angle-left right"></i> </p>
+            <p>Bank Management<i class="fas fa-angle-left right"></i> </p>
           </a>
           <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="{% url 'investor:add_bank' %}" class="nav-link">
+            <li class="nav-item">   
+              {% url 'investor:add_bank' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
                 <i class="far fa-circle nav-icon"></i> <p>Add New Bank</p>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="{% url 'investor:bank_list' %}" class="nav-link">
+            <li class="nav-item">   
+              {% url 'investor:bank_list' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
                 <i class="far fa-circle nav-icon"></i> <p>Bank List</p>
               </a>
             </li> 
           </ul>
-        </li>  
-        <li class="nav-item has-treeview">
+        </li> 
+        {% endif %} 
+        {% if request.session.editor|user_has_access:"Pop Up Management" or request.user.is_authenticated %} 
+        <li {% if "/popup/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
           <a href="#" class="nav-link">
             <i class="fas fa-fire-alt"></i>
-            <p>Pop Up <i class="fas fa-angle-left right"></i> </p>
+            <p>Pop Up Management <i class="fas fa-angle-left right"></i> </p>
           </a>
           <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="{% url 'investor:add_popup' %}" class="nav-link">
+            <li class="nav-item"> 
+              {% url 'investor:add_popup' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
                 <i class="far fa-circle nav-icon"></i> <p>Add New Pop Up</p>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="{% url 'investor:popup_list' %}" class="nav-link">
+            <li class="nav-item"> 
+              {% url 'investor:popup_list' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
                 <i class="far fa-circle nav-icon"></i> <p>Pop Up List</p>
               </a>
             </li> 
           </ul>
         </li> 
-         
-        <li class="nav-item has-treeview">
+        {% endif %}
+        {% if request.session.editor|user_has_access:"Website Pages" or request.user.is_authenticated %} 
+        <li {% if "/website/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
           <a href="#" class="nav-link">
             <i class="fas fa-file-alt"></i>
             <p>Website Pages <i class="fas fa-angle-left right"></i> </p>
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{% url 'investor:dashboard_terms_condition' %}" class="nav-link">
+              {% url 'investor:dashboard_terms_condition' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
                 <i class="far fa-circle nav-icon"></i> <p>Terms & Conditions</p>
               </a>
             </li> 
           </ul>
-        </li>   
+        </li>  
+        {% endif %}
+        {% if request.session.editor|user_has_access:"Website Pages" or request.user.is_authenticated %} 
+        <li {% if "/role/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
+          <a href="#" class="nav-link">
+            <i class="fas fa-file-alt"></i>
+            <p>Role Management <i class="fas fa-angle-left right"></i> </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              {% url 'investor:role_list' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
+                <i class="far fa-circle nav-icon"></i> <p>Role List</p>
+              </a>
+            </li> 
+            <li class="nav-item">
+              {% url 'investor:add_role' as url %}
+              <a href="{{ url }}" {% if request.path == url %} class="nav-link active" {% else %} class="nav-link" {% endif %}> 
+                <i class="far fa-circle nav-icon"></i> <p>Add New Role</p>
+              </a>
+            </li> 
+          </ul>
+        </li>  
+        {% endif %}
 
-        <li class="nav-item">
-          <a href="{% url 'investor:admin_chat' 0 %}" class="nav-link">
-            <i class="nav-icon far fa-envelope"></i>
-            <p>Inbox
-            {% if admin_message|show_unread_admin_message %}
-             <span class="badge badge-danger right">{{admin_message|show_unread_admin_message }}</span> 
-
-            {% endif %}
+        {% if request.session.editor|user_has_access:"Interest Rate Management" or request.user.is_authenticated %} 
+        <li {% if "/interest/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
+          <a href="{% url 'investor:add_interest' %}" class="nav-link">
+            <i class="fas fa-dollar-sign"></i> <p>Interest Rate Management
           </p>
           </a> 
-        </li>  
-        <li class="nav-item">
+        </li> 
+        {% endif %}
+        {% if request.session.editor|user_has_access:"Bulk Email Management" or request.user.is_authenticated %} 
+        <li {% if "/send-email/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
+          <a href="{% url 'investor:send_bulk_email' %}" class="nav-link">
+            <i class="fas fa-envelope-open-text"></i> <p> Bulk Email Management
+          </p>
+          </a> 
+        </li> 
+        {% endif %} 
+        {% if request.session.editor|user_has_access:"Inbox" or request.user.is_authenticated %} 
+          <li {% if "/admin-chat/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
+            <a href="{% url 'investor:admin_chat' 0 %}" class="nav-link">
+              <i class="nav-icon far fa-envelope"></i>
+              <p>Inbox
+              {% if admin_message|show_unread_admin_message %}
+              <span class="badge badge-danger right">{{admin_message|show_unread_admin_message }}</span> 
+              {% endif %}
+            </p>
+            </a> 
+          </li>  
+        {% endif %} 
+        {% if request.session.editor|user_has_access:"Notification" or request.user.is_authenticated %} 
+        <li {% if "/admin/notifications/" in request.path %} class="nav-item has-treeview menu-open" {% else %} class="nav-item has-treeview" {% endif %}>
           <a href="{% url 'investor:admin_notification_list' %}" class="nav-link">
             <i class="fas fa-bell"></i> <p> Notification 
             {% if admin_notification|admin_notifications %}
@@ -162,7 +248,7 @@
           </p>
           </a> 
         </li> 
-
+        {% endif %}
       </ul>
       {% endif %}
 

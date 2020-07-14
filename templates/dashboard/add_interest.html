@@ -1,0 +1,63 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+
+{% block d-title %}
+    Add new Bank
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-12"> 
+            <h1 class="m-0 text-dark float-left w-75">Set Interest</h1> 
+        </div> 
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+<section class="message_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% if messages %}  
+                    {% for message in messages %}
+                        <p class="pb-1" style="color: green;"><i class="fas fa-check-circle"></i> {{message}}</p>
+                    {% endfor %} 
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+<section class="invest_request_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-10">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="card card-body"> 
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Interest Rate (%)</label>
+                            <div class="col-sm-9">
+                                <input type="number" name="interest" value="{{amount}}" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row"> 
+                            <div class="col-sm-9 offset-sm-3">
+                                <input class="btn btn-success" type="submit" value="update">
+                            </div>
+                        </div> 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>  
+{% endblock d-content %}
+  
+{% block d-script %}
+   <script>
+       
+   </script>
+{% endblock d-script %}

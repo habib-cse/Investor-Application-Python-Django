@@ -1,0 +1,6 @@
+
+@media screen and (max-width: 500px) {
+	body .login-box, body .register-box {
+		width: 100%!important; 
+	}
+}

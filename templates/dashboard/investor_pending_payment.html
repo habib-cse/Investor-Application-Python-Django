@@ -21,7 +21,7 @@
         <div class="row">
             <div class="col">
                 {% for message in messages %}
-                    <p class="float-left mb-1" style="color: red;">{{message}}</p>
+                    <p class="float-left mb-3" style="color: red;"><i class="fas fa-exclamation-circle"></i> {{message}}</p>
                 {% endfor %}
             </div>
         </div>
@@ -50,7 +50,8 @@
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content"> 
                                 <div class="modal-body">
-                                    <p>Are you sure you want to Widthdraw all Amount</p>  
+                                    <p>Are you sure you want to terminate your contract with PFA INVEST?</p>  
+                                    <p style="color:red;font-size:14px;">Termination of contract would wait a duration of 30 days to receive payment.</p>
                                     <hr>
                                     <a href="{% url 'investor:investor_widthdraw_all' item.id %}" class="btn btn-sm btn-info mr-3 pr-3 pl-3">Yes</a>
                                     <button type="button" data-dismiss="modal" class="btn btn-info btn-sm pr-3 pl-3">No</button>
@@ -58,7 +59,7 @@
                                 </div>
                             </div>
                         </div>  
-                        <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#widthdraw_request-{{item.id}}">Widthdraw all Balance</button>
+                        <button class="btn btn-sm btn-success bg-red" data-toggle="modal" data-target="#widthdraw_request-{{item.id}}">Terminate the Contract</button>
          
                         <div class="modal fade" id="invest_request-{{item.id}}" tabindex="-1" role="dialog">
                           <div class="modal-dialog" role="document">
@@ -107,3 +108,4 @@
     </script>
 
 {% endblock d-script %}
+

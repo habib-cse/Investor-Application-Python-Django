@@ -1,13 +1,13 @@
 from django import template
 register = template.Library()  
-from investor.models import Bank,Investor,Invest,Notification, Message, Popup
+from investor.models import Bank,Investor,Invest,Notification, Message,Popup,Editor,Access,Role
 from datetime import datetime
 
 
 # For Admin Dashboard
 @register.filter
 def total_investor(self):
-    total_invest = Investor.objects.all().count()
+    total_invest = Investor.objects.filter(status=True).count()
     return("{:,}".format(total_invest))
 
 @register.filter
@@ -200,7 +200,7 @@ def admin_notification_list(self):
  
 @register.filter
 def top_investor_list(self):
-    investor_list = Investor.objects.all()
+    investor_list = Investor.objects.filter(status=True)
     invest_list = Invest.objects.all().order_by('investor')
     dict = {}  
     for investor in investor_list: 
@@ -262,7 +262,26 @@ def show_unread_investor_message(id):
         return unread_messages
 
 
+
 @register.filter
 def active_popup_list(request):
     popup_list = Popup.objects.filter(status=True).order_by('-timestamp') 
     return popup_list
+
+
+@register.filter
+def user_has_access(id,access_name):
+    user_access = Editor.objects.filter(id=id, role__access__has_access=access_name)
+    if user_access.exists():
+        return True
+    else:
+        return False
+
+@register.filter  
+def check_access(access_id,role): 
+    check_access = Access.objects.get(id = access_id)
+    role_access = Role.objects.filter(access = check_access,id=role.id)
+    if role_access.exists():
+        return True
+    else:
+        return False

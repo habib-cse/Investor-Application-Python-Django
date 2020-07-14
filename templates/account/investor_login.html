@@ -2,7 +2,7 @@
 {% load crispy_forms_field %} 
 {% load static %}
 {% block ac-title %}
-    Investor Registrations
+    Investor Login
 {% endblock ac-title %}
 
 {% block ac-content %}
@@ -13,13 +13,13 @@
 </div>
 <div class="card">
   <div class="card-body register-card-body">
-    <p class="login-box-msg">PFA Invester Login Form</p>
+    <p class="login-box-msg">PFA Investor Login Form</p>
 
     <form action="" method="POST">
       {% csrf_token %}
       <div id="first_page">
         <div class="input-group mb-3">
-          <input type="text" name='username' class="form-control" placeholder="Username" required>
+          <input type="text" name='username' class="form-control" placeholder="Username or Email" required>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>
@@ -34,25 +34,36 @@
             </div>
           </div>
         </div>  
-        
+            
         {% if messages %}
             
             {% for message in messages %}
+            
+            {% if message.tags == "error" %}
                 <div class="login_error">
-                    <p style="color: red;">{{message}}</p>
+                    <p style="color: green;"><i class="fas fa-exclamation-triangle"></i> {{message}}</p>
                 </div>
+            {% else %}
+                <div class="login_error">
+                    <p style="color: green;"><i class="fas fa-check-circle"></i> {{message}}</p>
+                </div>
+            {% endif %}
+                
+                
+                
             {% endfor %}
                 
         {% endif %}
-            
-        <input class="btn btn-success float-right" type="submit" value="Login">
+        <p class="float-left w-75 ">Don't have an Account? <a href="{% url 'investor:investor_registration' %}">Signup</a></p>
+
+        <input class="btn btn-success float-right w-25" type="submit" value="Login">
 
 
       </div> 
 
     </form>  
     <div class="d-block w-100 overflow-hidden mt-3 pt-2">
-      <p>Don't have an Account? <a href="{% url 'investor:investor_registration' %}">Signup</a></p>
+      <p style="text-align: center; display:block" class="align-center">Forgot password? <a href="{% url 'investor:investor_password_resets' %}">here</a> to reset. </p>
 
     </div>
   </div>

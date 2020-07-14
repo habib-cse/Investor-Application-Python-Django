@@ -114,3 +114,15 @@ strong{
     display: block;
     margin: 0 auto;
 }
+.small-box p {
+    font-size: 14px;
+}
+
+.nav-item.has-treeview.menu-open > a.nav-link{
+    background-color: #007bff !important;
+    color: #fff !important;
+}
+[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active, [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active:focus, [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active:hover {
+    background-color: rgba(255,255,255,.2) !important;
+    color: #fff;
+}

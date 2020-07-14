@@ -1,0 +1,601 @@
+
+<?php 
+/*
+Template Name: Practise Price
+*/
+get_header('new')?>
+
+<style> 
+.practise_price_area {
+	margin-bottom: 60px;
+}
+    .practise_price_area .container {
+        width: 70%;
+    }
+    .signup_titles h2 {
+        text-align: center;
+        color: #1D95E1;
+        font-size: 26px;
+        margin-top: 180px;
+        margin-bottom: 40px;
+    }
+    .signup_titles {
+        text-align: center;
+        margin-left: 31%;
+    }
+    .single_signup_type {
+        text-align: center;
+        margin-bottom: 40px;
+        margin-left: 31%;
+    }
+    .single_signup_type p {
+        color: #191919;
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+    .single_signup_type ul li {
+        display: inline;
+        margin: 0;
+        padding: 0;
+    }
+    .single_signup_type ul li button.last_button {
+        border-radius: 0px 50px 50px 0px;
+        margin-left: -5px;
+    }
+    .single_signup_type ul li button {
+        margin: 0;
+        border: 2px solid #E55607;
+        background: transparent;
+        font-size: 18px;
+        color: #E55607;
+        padding: 10px 30px;
+        line-height: 1.4;
+        border-radius: 50px 0 0 50px;
+        width: 210px;
+    }
+    .table_header.common_text.no_bg{
+        background:transparent;
+    }
+    .common_text p {
+        font-size: 15px;
+        line-height: 1.2;
+        color: #3E3E3E;
+    }
+    .practice_check.common_text {
+        position: relative;
+    }
+    .practice_check.common_text p span {
+        color: #1D95E1;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    .practice_check.common_text p span:hover img{ 
+        opacity: 1;
+        z-index: 99;
+        left:100%;
+    }
+    .practice_check.common_text p img {
+        position: absolute;
+        top: 0;
+        left: 95%;
+        opacity: 0;
+        z-index: -1;
+        transition: all 0.5s;
+    }
+
+    .common_text {
+        padding-right: 10px;
+    }
+    body .single_line_text {
+        padding: 14px 10px;
+    }
+    .pricing_table_text {
+        float: left;
+        width: 31%;
+        text-align: right;
+    }
+    .single_pricing_table.middle_pricing_table {
+        border: 2px solid #E55608;
+    }
+    .single_pricing_table {
+        float: left;
+        width: 23%;
+        text-align: center; 
+        background: rgba(151,151,151,.1);
+        transition: all 0.5s;
+    }
+    .single_pricing_table:hover{  
+        background: rgba(10,151,151,.2);
+    }
+    .table_header {
+        background: #1D95E1;
+        height: 100px;
+    }
+    .cost_by_client.common_text.single_line_text {
+        padding-right: inherit;
+    }
+    .table_header h2 {
+        font-size: 20px;
+        margin: 0;
+        color: #fff;
+        padding-top: 15px;
+    }
+    .table_header p {
+        font-size: 14px;
+        color: #fff;
+        line-height: 1.2;
+        padding: 0 10px;
+        margin-top: 10px;
+    }
+    .cost_by_client p span {
+        color: #1D95E1;
+    }
+    .cost_table {
+        height: 75px;
+        margin: 0;
+        border-bottom: 2px solid #fff;
+    }
+    .cost_table h2 {
+        margin: 0;
+        color: #1D95E1;
+        font-size: 22px;
+        padding: 12px;
+        margin-bottom: -10px;
+    }
+    .cost_by_client {
+        height: 67px;
+        border-bottom: 2px solid #fff;
+    }
+    .cost_by_client.cost_table h2 {
+        margin-bottom: -18px;
+    }
+    .cost_by_client p {
+        font-size: 14px;
+        padding: 6px 10px;
+        line-height: 1.3;
+    }
+    .practice_check {
+        height: 50px;
+        border-bottom: 2px solid #fff;
+        padding: 9px;
+    }
+    .plan_button {
+        background: transparent;
+        padding: 8px;
+        border-bottom: 1px solid #fff;
+        height: 52px;
+    }
+    .plan_button a {
+        font-size: 14px;
+        color: #fff;
+        display: block;
+        padding: 7px;
+        border-radius: 100px;
+        transition: all 0.5s;
+        background: #1D95E1;
+    }
+    .most_popular p {
+        width: 23.6%;
+        display: inline-block;
+        background: #E55607;
+        margin-left: 54.1%;
+        font-size: 18px;
+        text-align: center;
+        color: #fff;
+        padding: 8px;
+        margin-bottom: -1px;
+    }
+    .single_pricing_table:hover .plan_button a {
+        background:#E55607; 
+    }
+    .single_signup_type ul li button:focus {
+        outline: none;
+    }
+    p#group_one,p#group_two {
+      font-size: 13px;
+      line-height: 1.2;
+      color: ;
+  }
+
+
+
+
+@media only screen and (min-width: 768px) and (max-width:1169px) {
+    .practise_price_area .container {
+        width: 98%;
+    }
+
+    .single_signup_type ul li button { 
+        font-size: 16px; 
+        padding: 10px;  
+        width: 155px;
+    }
+    .signup_titles h2 {
+        margin-bottom: 30px;
+    }
+    .table_header p {
+        font-size: 13px; 
+        line-height: 1.2;
+        padding: 0 10px;
+        margin-top: 7px;
+    }
+    .table_header p br {
+        display: none;
+    }
+    .cost_table h2 { 
+        font-size: 20px;
+        padding: 10px;
+        margin-bottom: -7px;
+    }
+    .cost_by_client p br {
+        display: none;
+    }
+    .cost_by_client p {
+        font-size: 13px;
+        padding: 6px 10px;
+        line-height: 1.3;
+    }
+    .common_text p {
+        font-size: 13px; 
+    }
+    .plan_button { 
+        padding: 10px;
+    }
+    .plan_button a {
+        font-size: 16px; 
+        padding: 7px;
+        border-radius: 100px;
+        transition: all 0.5s;
+    }
+
+
+}
+@media only screen and (max-width: 767px) {
+    .practise_price_area .container {
+        width: 96%;
+    }
+    .signup_titles h2 { 
+        font-size: 24px; 
+        margin-bottom: 30px;
+    }
+    .single_signup_type { 
+        margin-bottom: 30px;
+        margin-left: 0;
+    }
+    .single_signup_type ul li button { 
+        font-size: 15px; 
+        padding: 10px; 
+        width: 48%;
+    }
+    .pricing_table_text { 
+        width: 28%; 
+    }
+    .single_pricing_table { 
+        width: 24%; 
+    }
+    .table_header { 
+        height: 190px;
+    }
+
+    .table_header h2 {
+        font-size: 17px;
+        margin: 0; 
+        padding-top: 15px;
+    }
+    .table_header p {
+        font-size: 13px; 
+        line-height: 1.3;
+        padding: 0 5px;
+        margin-top: 8px;
+    }
+    .table_header p br {
+        display: none;
+    }
+    .common_text p {
+        font-size: 13px; 
+    }
+    .cost_table h2 { 
+        font-size: 16px;
+        padding: 8px;
+        margin-bottom: -7px;
+    }
+    p#group_one, p#group_two {
+        font-size: 11px; 
+    }
+    .cost_by_client p {
+        font-size: 13px;
+        padding: 5px;
+        line-height: 1.3;
+    }
+    .practice_check {
+        height: 130px; 
+        padding: 5px;
+        vertical-align: middle;
+    }
+    .cost_by_client {
+        height: 115px;
+        border-bottom: 2px solid #fff;
+    }
+    .plan_button a {
+        font-size: 13px; 
+        padding: 5px 7px; 
+        line-height: 1.1;
+    }
+    .plan_button { 
+        padding: 10px 3px;
+    }
+    .signup_titles { 
+        margin-left: 0;
+    }
+    .most_popular p {
+        width: 25.6%; 
+        margin-left: 52.1%;
+        font-size: 13px; 
+        padding: 1px;
+        margin-bottom: -1px;
+    }
+
+
+}
+
+
+
+</style>
+
+
+
+<section class="practise_price_area">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="signup_titles">
+                    <h2>Choose the best plan for you and sign up now.</h2>
+                </div> 
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="single_signup_type"> 
+                    <ul>
+                        <li><button id="annual" style="background:#E55607;color:#fff " onclick="mycar.annualButton(1);mycar.show();annualButton()" class='solo_button annual'>Annual</button></li>
+                        <li><button id="monthly" onclick="mycar.annualButton(0);mycar.show();monthlyButton()" class='solo_button last_button monthly'>Monthly</button></li>
+                    </ul>
+                </div>
+            </div> 
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="most_popular"> 
+                     <p>Most Popular</p>
+                </div>
+            </div> 
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="priceing_table_area annual_table">
+                    <div class="pricing_table_text">
+                        <div class="table_header common_text no_bg"> 
+
+                        </div>
+                        <div class="cost_table common_text single_line_text">
+                            <P></P>
+                        </div>
+                        <div class="plan_button">
+                            <P></P>
+                        </div>
+                        <div class="cost_by_client common_text single_line_text">
+                            <p>Free claims for each patient/client</p>
+                        </div>
+                        <div class="practice_check common_text">
+                            <p>Register Practice info for <br> error-free claims</p>
+                        </div> 
+                        <div class="practice_check common_text single_line_text">
+                            <p>Quick Start Welcome Kit</p>
+                        </div> 
+                        <div class="practice_check common_text">
+                            <p><span>Reimbursify Partner graphic <img src="https://reimbursify.com/wp-content/uploads/2020/04/partner-graphic.png" alt=""></span> for easy downloads from your website</p>
+                        </div>  
+                        <div class="practice_check common_text">
+                            <p>First FIVE claims free for every patient/client</p>
+                        </div> 
+                        <div class="practice_check common_text">
+                            <p>FileFAST Web App for your website <br>
+                                <span>What is FileFAST? <img src="https://reimbursify.com/wp-content/uploads/2020/04/filefast.png" alt=""></span></p>
+                        </div> 
+                        <div class="practice_check common_text">
+                            <p>Free phone consultations with our Private Practice Specialist</p>
+                        </div> 
+                        <div class="practice_check common_text">
+                            <p>Premium welcome kit with display rack & refills of Pro information cards</p>
+                        </div> 
+                        <div class="practice_check common_text single_line_text">
+                            <p>Priority Claim Support</p>
+                        </div> 
+                        <div class="practice_check common_text">
+                            <p>Opportunity to join our <br> Practitioner Council</p>
+                        </div> 
+                        <div class="practice_check common_text single_line_text">
+                            <p>Priority deployment for new features</p>
+                        </div> 
+                    </div>
+                    <div class="single_pricing_table">
+                        <div class="table_header">
+                            <h2>Practice BASIC</h2>
+                            <p>A great, no-cost way to <br> support your caseload</p>
+                        </div>
+                        <div class="cost_table">
+                            <h2>$0</h2>
+                        </div> 
+                        <div class="plan_button">
+                            <a id="basic_button" href="https://reimbursify.com/practice-signup/basic/">Select this plan</a>
+                        </div> 
+                        <div class="cost_by_client cost_table">
+                            <h2>1</h2>
+                            <p>then as low as $1.49</span></p>
+                        </div>
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                        </div> 
+                        <div class="practice_check">
+                        </div> 
+                        <div class="practice_check">
+                        </div> 
+                        <div class="practice_check">
+                        </div> 
+                        <div class="practice_check">
+                        </div> 
+                        <div class="practice_check">
+                        </div> 
+                        <div class="practice_check">
+                        </div>
+                    </div>
+                    <div class="single_pricing_table middle_pricing_table">
+                        <div class="table_header">
+                            <h2>Practice PLUS</h2>
+                            <p>Give patients/clients their <br> FIRST 5 CLAIMS FREE!</p>
+                        </div>
+                        <div class="cost_table">
+                            <h2 id="balance">$8.99/mo</h2>
+                            <p id="group_one">& 20% off for each additional practitioner</p>
+                        </div> 
+                        <div class="plan_button">
+                            <a id="plus_btn" href="https://reimbursify.com/practice-signup/plus_annual/">Select this plan</a>
+                        </div> 
+                        <div class="cost_by_client cost_table">
+                            <h2>5</h2>
+                            <p>then as low as <span>$1.49</span></p>
+                        </div>
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                        </div> 
+                        <div class="practice_check">
+                        </div> 
+                        <div class="practice_check">
+                        </div> 
+                        <div class="practice_check">
+                        </div>
+                    </div>
+                    <div class="single_pricing_table">
+                        <div class="table_header">
+                            <h2>Practice PRO</h2>
+                            <p>A concierge plan providing NO- <br> COST FILING for your practice</p>
+                        </div>
+                        <div class="cost_table">
+                            <h2 id="pro_price">$69/mo</h2>
+                            <p id="group_two">& 20% off for each additional practitioner</p>
+                        </div> 
+                        <div class="plan_button">
+                            <a id="pro_btn" href="https://reimbursify.com/practice-signup/pro_annual/">Select this plan</a>
+                        </div>  
+                        <div class="cost_by_client cost_table">
+                            <h2>Unlimited</h2>
+                            <p></p>
+                        </div>
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div> 
+                        <div class="practice_check">
+                            <img src="https://reimbursify.com/wp-content/uploads/2020/04/blue_check.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> 
+   
+  <script> 
+
+    function monthlyButton(){
+      id = document.getElementById("balance").innerHTML = '$11.99/mo';
+      id = document.getElementById("pro_price").innerHTML = '$99/mo';
+
+      document.getElementById("annual").style.background="transparent";
+      document.getElementById("annual").style.color="#E55607";
+      document.getElementById("monthly").style.background="#E55607"
+      document.getElementById("monthly").style.color="#fff" 
+
+
+      document.getElementById("basic_button").setAttribute('href',"https://reimbursify.com/practice-signup/basic/");
+      document.getElementById("plus_btn").setAttribute('href',"https://reimbursify.com/practice-signup/plus_monthly/");
+      document.getElementById("pro_btn").setAttribute('href',"https://reimbursify.com/practice-signup/pro_monthly");
+
+  }
+  function annualButton(){
+      id = document.getElementById("balance").innerHTML = '$8.99/mo';
+      id = document.getElementById("pro_price").innerHTML = '$69/mo';
+
+      document.getElementById("annual").style.background="#E55607"
+      document.getElementById("annual").style.color="#fff"
+      document.getElementById("monthly").style.background="transparent"
+      document.getElementById("monthly").style.color="#E55607" 
+
+      document.getElementById("basic_button").setAttribute('href',"https://reimbursify.com/practice-signup/basic/");
+      document.getElementById("plus_btn").setAttribute('href',"https://reimbursify.com/practice-signup/plus_annual/");
+      document.getElementById("pro_btn").setAttribute('href',"https://reimbursify.com/practice-signup/pro_annual/");
+  } 
+
+
+
+
+
+
+
+
+
+    </script>
+
+
+  
+
+ 
+<?php get_footer('new');?>

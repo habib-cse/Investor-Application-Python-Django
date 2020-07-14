@@ -16,6 +16,8 @@
         <h1 class="m-0 text-dark">Admin Dashboard</h1>  
         {% elif request.session.investor %}
         <h1 class="m-0 text-dark">Investor Dashboard</h1>
+        {% elif request.session.editor %}
+        <h1 class="m-0 text-dark">User Dashboard</h1>
         {% endif %}
           
         
@@ -25,7 +27,7 @@
 </div>
 
 
-{% if request.user.is_authenticated %} 
+{% if request.user.is_authenticated or request.session.editor %} 
 <section class="content investor_dashboard">
   <div class="container-fluid"> 
     <div class="row">
@@ -39,7 +41,11 @@
           <div class="icon">
             <i class="ion ion-bag"></i>
           </div>
-          <a href="{% url 'investor:all_investor_list' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% if request.user.is_authenticated or request.session.editor|user_has_access:"Investor Management"%}
+            <a href="{% url 'investor:all_investor_list' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% else %}          
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% endif %}
         </div>
       </div>
       <!-- ./col -->
@@ -53,7 +59,11 @@
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
           </div>
+          {% if request.user.is_authenticated or request.session.editor|user_has_access:"Investor Management"%}
           <a href="{% url 'investor:all_investor_list' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% else %}          
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% endif %}
         </div>
       </div>
       <div class="col-lg-2 col-6">
@@ -66,7 +76,11 @@
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
           </div>
+          {% if request.user.is_authenticated or request.session.editor|user_has_access:"Payment Management"%}
           <a href="{% url 'investor:interest_paid_admin' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% else %}          
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% endif %}
         </div>
       </div>
       <div class="col-lg-2 col-6">
@@ -79,7 +93,11 @@
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
           </div>
+          {% if request.user.is_authenticated or request.session.editor|user_has_access:"Invest Management"%}
           <a href="{% url 'investor:all_active_invest_list' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% else %}          
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% endif %}
         </div>
       </div> 
       <div class="col-lg-2 col-6"> 
@@ -91,7 +109,11 @@
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
           </div>
+          {% if request.user.is_authenticated or request.session.editor|user_has_access:"Invest Management"%}
           <a href="{% url 'investor:all_active_invest_list' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% else %}          
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% endif %}
         </div>
       </div> 
       <div class="col-lg-2 col-6"> 
@@ -103,7 +125,11 @@
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
           </div>
+          {% if request.user.is_authenticated or request.session.editor|user_has_access:"Invest Management"%}
           <a href="{% url 'investor:all_pending_request' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% else %}          
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          {% endif %}
         </div>
       </div> 
 
@@ -123,12 +149,14 @@
         <div class="table_body_area">
           <table class="table table-bordered table-striped">
             <thead class="table-dark text-center">
-              <th>SL</th>
-              <th>Investor</th>
-              <th>Amount</th>
-              <th>Date</th>
-              <th>Interest</th>
-              <th>Action</th>
+              <th class="pr-0 pl-0">SL</th>
+              <th class="pr-0 pl-0">Investor</th>
+              <th class="pr-0 pl-0">Amount</th>
+              <th class="pr-0 pl-0">Date</th>
+              <th class="pr-0 pl-0">Interest</th>
+              {% if request.user.is_authenticated or request.session.editor|user_has_access:"Can Approve Invest"%}                      
+              <th class="pr-0 pl-0">Action</th>
+              {% endif %} 
             </thead>
             <tbody class="text-center">
               
@@ -139,20 +167,20 @@
                 <td class=" align-middle">₦{{item.amount_to_invest|coma_separator_value}}</td>
                 <td class=" align-middle">{{item.date_of_invest |date}}</td>
                 <td class=" align-middle">₦{{item.expected_interest | coma_separator_value}}</td>
+                {% if request.user.is_authenticated or request.session.editor|user_has_access:"Can Approve Invest"%}                      
                 <td class=" align-middle">
                   <div class="modal fade" id="approve-{{item.id}}" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content"> 
                         <div class="modal-body">
-                            <p>Are you sure you want to Approve of ₦{{item.amount_to_invest|coma_separator_value}} </p>  
-                            <hr>
+                          <p>Are you sure you want to approve ₦{{item.amount_to_invest|coma_separator_value}} from {{item.investor.first_name}} {{item.investor.last_name}} </p>                              <hr>
                             <a href="{% url 'investor:approve_investment' item.id %}" class="btn btn-sm btn-info mr-3 pr-3 pl-3">Yes</a>
                             <button type="button" data-dismiss="modal" class="btn btn-info btn-sm pr-3 pl-3">No</button>
                         </div>
                         </div>
                     </div>
-                </div>  
-                  <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#approve-{{item.id}}">Approve</button>
+                  </div>  
+                  <button class="btn btn-sm btn-success mb-1" data-toggle="modal" data-target="#approve-{{item.id}}">Approve</button>
                   <div class="modal fade" id="cancale-{{item.id}}" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content"> 
@@ -165,16 +193,19 @@
                         </div>
                     </div>
                 </div>  
-                  <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#cancale-{{item.id}}">Cancel</button>
-
+                  <button class="btn btn-sm btn-success mb-1" data-toggle="modal" data-target="#cancale-{{item.id}}">Cancel</button>
                 </td>
+                {% endif %} 
               </tr>
               {% endfor %} 
               
             </tbody>
           </table>
       </div>
+
+      {% if request.user.is_authenticated or request.session.editor|user_has_access:"Invest Management"%}                      
         <a href="{% url 'investor:all_pending_request' %}" class="btn btn-success d-block">All Pending Request <i class="fas fa-arrow-circle-right ml-2"></i></a>
+      {% endif %}
 
         </div>
       </div>
@@ -206,8 +237,9 @@
             </tbody>
           </table>
         </div>
-        <a href="{% url 'investor:all_investor_list' %}" class="btn btn-success d-block">View All Investor<i class="fas fa-arrow-circle-right ml-2"></i></a>
-
+        {% if request.user.is_authenticated or request.session.editor|user_has_access:"Investor Management"%}                      
+          <a href="{% url 'investor:all_investor_list' %}" class="btn btn-success d-block">View All Investor<i class="fas fa-arrow-circle-right ml-2"></i></a>
+         {% endif %}
         
         </div>
       </div> 
@@ -234,7 +266,10 @@
               <th>Withdrawal Date</th>
               <th>Days Left</th>
               <th>Interest</th>
-              <th>Action</th>
+              {% if request.user.is_authenticated or request.session.editor|user_has_access:"Can Pay"%}
+              <th>Action</th> 
+              {% endif %}
+                
             </thead>
             <tbody class="text-center">
               
@@ -247,6 +282,8 @@
                 <td class=" align-middle">{{item.withdraw_date |date}}</td>
                 <td class=" align-middle">{{item.id|days_remaining}} days left</td>
                 <td class=" align-middle">₦{{item.expected_interest | coma_separator_value}}</td>
+
+                {% if request.user.is_authenticated or request.session.editor|user_has_access:"Can Pay"%}
                 <td class=" align-middle"> 
                   <div class="modal fade" id="pay-{{item.id}}" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
@@ -259,17 +296,20 @@
                         </div>
                         </div>
                     </div>
-                </div>  
+                </div>                  
                   <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#pay-{{item.id}}">Pay</button> 
                 </td>
+                {% endif %} 
               </tr>
               {% endfor %} 
               
             </tbody>
           </table>
       </div>
-        <a href="{% url 'investor:all_active_invest_list' %}" class="btn btn-success d-block">All Active Invest List<i class="fas fa-arrow-circle-right ml-2"></i></a>
+      {% if request.user.is_authenticated or request.session.editor|user_has_access:"Can Pay" or request.session.editor|user_has_access:"Invest Management"%}
 
+        <a href="{% url 'investor:all_active_invest_list' %}" class="btn btn-success d-block">All Active Invest List<i class="fas fa-arrow-circle-right ml-2"></i></a>
+      {% endif %}
         </div>
       </div>
     </div>

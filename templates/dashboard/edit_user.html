@@ -1,0 +1,88 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+{% load crispy_forms_field %}
+{% block d-title %}
+    Udpate new User
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-12"> 
+          <h1 class="m-0 text-dark float-left w-75">Update New User</h1> 
+          <a href="{% url 'investor:user_list' %}" class="btn btn-success float-right text-right">User list</a>
+        </div> 
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div> 
+<section class="message_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% if messages %}  
+                    {% for message in messages %}
+                        <p class="pb-1" style="color: red;">{{message}}</p>
+                    {% endfor %} 
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+<section class="invest_request_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10 col-sm-12">
+                <form action="" method="POST">
+                    {% csrf_token %} 
+                    <div class="card card-body pt-5">
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Username</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="username" value="{{editor.username}}" class="form-control">
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Full Name</label>
+                            <div class="col-sm-9"> 
+                                <input type="text" name="full_name" value="{{editor.full_name}}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">Email Address</label>
+                            <div class="col-sm-9"> 
+                                <input type="email" name="email" value="{{editor.email}}" class="form-control">
+                            </div>
+                        </div> 
+                        
+                        <div class="form-group row">
+                            <label for="inputName" class="col-sm-3 col-form-label">User Role</label>
+                            <div class="col-sm-9"> 
+                                <select name="role" class="form-control"> 
+                                    {% for role in role_list %}
+                                        <option value="{{role.id}}" {% if role.id == editor.role.id %} selected {% endif %}>{{role}}</option>
+                                    {% endfor %} 
+                                </select>
+                            </div>
+                        </div> 
+
+
+                        <div class="form-group row"> 
+                            <div class="col-sm-9 offset-sm-3"> 
+                                <input class="btn btn-success" type="submit" value="Update User"> 
+                            </div>
+                        </div> 
+                    </div>  
+                </form>
+            </div>
+        </div>
+    </div>
+</section>  
+{% endblock d-content %}
+  
+{% block d-script %}
+   <script>
+       
+   </script>
+{% endblock d-script %}

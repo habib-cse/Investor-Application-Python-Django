@@ -1,0 +1,60 @@
+{% extends 'dashboard/base/base.html' %}
+{% load extra_tags %}
+{% load humanize %}
+{% block d-title %}
+    Role List
+{% endblock d-title %} 
+
+{% block d-content %} 
+
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-12"> 
+          <h1 class="m-0 text-dark float-left w-75">Role List</h1> 
+          <a href="{% url 'investor:add_role' %}" class="btn btn-success float-right text-right">Add New Role</a>
+        </div> 
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div> 
+<section class="invest_request_area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {% for message in messages %}
+                    <p class="float-left mb-2" style="color: red;">{{message}}</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-bordered table-striped text-center">
+                    <thead class="table-dark">
+                        <th>SL</th>
+                        <th>Role Name</th>  
+                        <th>Action</th>
+                    </thead>
+                    <tbody class="text-center">
+                        
+                        {% for role in role_list %}
+                            <tr>
+                                <td class="align-middle">{{forloop.counter}}</td>
+                                <td class="align-middle">{{role.role_name}}</td> 
+                                <td class="align-middle text-center">
+                                    <a href="{% url 'investor:edit_role' role.id %}" class="btn btn-success btn-sm d-inline-block mr-1">Edit</a> 
+                                    <a href="{% url 'investor:bank_active' role.id %}" class="btn btn-warning btn-sm d-inline-block mr-1">Delete</a> 
+                                </td> 
+                            </tr>
+                        {% endfor %} 
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section> 
+{% endblock d-content %} 
+{% block d-script %}
+    <script> 
+    </script>
+
+{% endblock d-script %}

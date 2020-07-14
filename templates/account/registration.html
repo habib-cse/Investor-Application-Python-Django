@@ -13,7 +13,16 @@
 </div>
 <div class="card">
   <div class="card-body register-card-body">
-    <p class="login-box-msg">PFA INVEST SIGN UP FORM    </p>
+    <p class="login-box-msg">PFA INVEST SIGN UP FORM    </p> 
+    {% if messages %}
+            
+    {% for message in messages %}
+        <div class="login_error">
+            <p style="color: red;">{{message}}</p>
+        </div>
+    {% endfor %}
+        
+{% endif %}
 
     <form action="" method="POST">
       {% csrf_token %}
@@ -68,11 +77,12 @@
           </div>
           <div class="form-group">
             <p class="mb-1">Amount Invested In Naira (₦)</p>
-            <input type="number" name="amount_invest" placeholder="Amount Invested In Naira (₦)" onkeyup="amountCalculation()" id="invest_amount" class="form-control"  required>
+            <input type="text" name="amount_invest" placeholder="Amount Invested In Naira (₦)" onkeyup="amountCalculation()" id="invest_amount" class="form-control auto"  required>
+            <input type="hidden" name="" id="hidden_amount" value="{{amount}}">
           </div>
           <div class="form-group">
             <p class="mb-1">Expected Interest In Naira (₦)</p>
-            <input type="number" name="earning_amount" placeholder="Expected Interest In Naira (₦)" id="earning_amount" class="form-control" readonly>
+            <input type="text" name="earning_amount" placeholder="Expected Interest In Naira (₦)" id="earning_amount" class="form-control" readonly>
           </div>
           <div class="form-group">
             <p class="mb-1">Date of Investment</p>
@@ -117,16 +127,29 @@
 
 {% endblock ac-content %}
 {% block ac-script %}
+<script src="{% static '/js/autonumaric.js' %}"></script>
   <script>
 
-    function amountCalculation(){
-      var invest_amount = document.getElementById("invest_amount").value
-      var earning_amount = (15* invest_amount)/100
-      earning_amount = Math.floor(earning_amount)
-      document.getElementById("earning_amount").setAttribute('value',earning_amount)
+    jQuery(function($) {
+        $('.auto').autoNumeric('init');
+    });
 
+    function formatNumber(num) {
+      return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 
+    function amountCalculation(){
+      var invest_amount = document.getElementById("invest_amount").value 
+      var interest_amount = document.getElementById("hidden_amount").value 
+      invest_amount = invest_amount.replace(/,/g,"");
+      invest_amount = parseFloat(invest_amount)
+      
+      var earning_amount = (interest_amount * invest_amount)/100
+      earning_amount = Math.floor(earning_amount) 
+      new_amounts = formatNumber(earning_amount)
+      document.getElementById("earning_amount").setAttribute('value',new_amounts + ".00")
+
+    } 
 
     function autoDate(){
       var main_date = document.getElementById('invest_date').value; 
@@ -235,6 +258,10 @@
       }
     }
 
+    function formatNumber(num) {
+      return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+    console.info(formatNumber(463547856))
   </script>  
  
 
